@@ -1,3 +1,9 @@
+run:
+	go run examples/base/main.go serve
+
+fe:
+	cd ui && npm install && npm run dev
+
 lint:
 	golangci-lint run -c ./golangci.yml ./...
 

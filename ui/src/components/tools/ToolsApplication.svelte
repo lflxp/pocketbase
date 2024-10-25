@@ -7,6 +7,7 @@
     import PageWrapper from "@/components/base/PageWrapper.svelte";
     import Field from "@/components/base/Field.svelte";
     import ToolsSidebar from "@/components/tools/ToolsSidebar.svelte";
+    import ToolsTemplateAccordion from "@/components/tools/ToolsTemplateAccordion.svelte";
 
     $pageTitle = "Application tools";
 
@@ -84,6 +85,13 @@
             {#if isLoading}
                 <div class="loader" />
             {:else}
+                <div class="accordions">
+                  <ToolsTemplateAccordion
+                    single
+                    key="meta.verificationTemplate"
+                    title={'JWT转换'}
+                  />
+                </div>
                 <div class="grid">
                     <div class="col-lg-6">
                         <Field class="form-field required" name="meta.appName" let:uniqueId>
