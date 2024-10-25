@@ -6,6 +6,7 @@ import PageLogs              from "@/components/logs/PageLogs.svelte";
 import PageRecords           from "@/components/records/PageRecords.svelte";
 import PageAdmins            from "@/components/admins/PageAdmins.svelte";
 import PageAdminLogin        from "@/components/admins/PageAdminLogin.svelte";
+import ToolsApplication      from "@/components/tools/ToolsApplication.svelte";
 import PageApplication       from "@/components/settings/PageApplication.svelte";
 import PageMail              from "@/components/settings/PageMail.svelte";
 import PageStorage           from "@/components/settings/PageStorage.svelte";
@@ -54,6 +55,12 @@ const routes = {
 
     "/logs": wrap({
         component: PageLogs,
+        conditions: baseConditions.concat([(_) => ApiClient.authStore.isValid]),
+        userData: { showAppSidebar: true },
+    }),
+
+    "/tools": wrap({
+        component:  ToolsApplication,
         conditions: baseConditions.concat([(_) => ApiClient.authStore.isValid]),
         userData: { showAppSidebar: true },
     }),

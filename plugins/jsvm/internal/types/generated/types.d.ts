@@ -1,4 +1,4 @@
-// 1729260365
+// 1729827335
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // -------------------------------------------------------------------
@@ -1160,9 +1160,9 @@ type _TygojaAny = any
  * functionality. The design is Unix-like, although the error handling is
  * Go-like; failing calls return values of type error rather than error numbers.
  * Often, more information is available within the error. For example,
- * if a call that takes a file name fails, such as [Open] or [Stat], the error
+ * if a call that takes a file name fails, such as Open or Stat, the error
  * will include the failing file name when printed and will be of type
- * [*PathError], which may be unpacked for more information.
+ * *PathError, which may be unpacked for more information.
  * 
  * The os interface is intended to be uniform across all operating systems.
  * Features not generally available appear in the system-specific package syscall.
@@ -1194,26 +1194,22 @@ type _TygojaAny = any
  * 	fmt.Printf("read %d bytes: %q\n", count, data[:count])
  * ```
  * 
- * # Concurrency
- * 
- * The methods of [File] correspond to file system operations. All are
- * safe for concurrent use. The maximum number of concurrent
- * operations on a File may be limited by the OS or the system. The
- * number should be high, but exceeding it may degrade performance or
- * cause other issues.
+ * Note: The maximum number of concurrent operations on a File may be limited by
+ * the OS or the system. The number should be high, but exceeding it may degrade
+ * performance or cause other issues.
  */
 namespace os {
  interface readdirMode extends Number{}
  interface File {
   /**
    * Readdir reads the contents of the directory associated with file and
-   * returns a slice of up to n [FileInfo] values, as would be returned
-   * by [Lstat], in directory order. Subsequent calls on the same file will yield
+   * returns a slice of up to n FileInfo values, as would be returned
+   * by Lstat, in directory order. Subsequent calls on the same file will yield
    * further FileInfos.
    * 
    * If n > 0, Readdir returns at most n FileInfo structures. In this case, if
    * Readdir returns an empty slice, it will return a non-nil error
-   * explaining why. At the end of a directory, the error is [io.EOF].
+   * explaining why. At the end of a directory, the error is io.EOF.
    * 
    * If n <= 0, Readdir returns all the FileInfo from the directory in
    * a single slice. In this case, if Readdir succeeds (reads all
@@ -1235,7 +1231,7 @@ namespace os {
    * 
    * If n > 0, Readdirnames returns at most n names. In this case, if
    * Readdirnames returns an empty slice, it will return a non-nil error
-   * explaining why. At the end of a directory, the error is [io.EOF].
+   * explaining why. At the end of a directory, the error is io.EOF.
    * 
    * If n <= 0, Readdirnames returns all the names from the directory in
    * a single slice. In this case, if Readdirnames succeeds (reads all
@@ -1248,18 +1244,18 @@ namespace os {
  }
  /**
   * A DirEntry is an entry read from a directory
-  * (using the [ReadDir] function or a [File.ReadDir] method).
+  * (using the ReadDir function or a File's ReadDir method).
   */
  interface DirEntry extends fs.DirEntry{}
  interface File {
   /**
    * ReadDir reads the contents of the directory associated with the file f
-   * and returns a slice of [DirEntry] values in directory order.
+   * and returns a slice of DirEntry values in directory order.
    * Subsequent calls on the same file will yield later DirEntry records in the directory.
    * 
    * If n > 0, ReadDir returns at most n DirEntry records.
    * In this case, if ReadDir returns an empty slice, it will return an error explaining why.
-   * At the end of a directory, the error is [io.EOF].
+   * At the end of a directory, the error is io.EOF.
    * 
    * If n <= 0, ReadDir returns all the DirEntry records remaining in the directory.
    * When it succeeds, it returns a nil error (not io.EOF).
@@ -1276,28 +1272,6 @@ namespace os {
    */
   (name: string): Array<DirEntry>
  }
- interface copyFS {
-  /**
-   * CopyFS copies the file system fsys into the directory dir,
-   * creating dir if necessary.
-   * 
-   * Files are created with mode 0o666 plus any execute permissions
-   * from the source, and directories are created with mode 0o777
-   * (before umask).
-   * 
-   * CopyFS will not overwrite existing files. If a file name in fsys
-   * already exists in the destination, CopyFS will return an error
-   * such that errors.Is(err, fs.ErrExist) will be true.
-   * 
-   * Symbolic links in fsys are not supported. A *PathError with Err set
-   * to ErrInvalid is returned when copying from a symbolic link.
-   * 
-   * Symbolic links in dir are followed.
-   * 
-   * Copying stops at and returns the first error encountered.
-   */
-  (dir: string, fsys: fs.FS): void
- }
  /**
   * Auxiliary information if the File describes a directory
   */
@@ -1306,7 +1280,7 @@ namespace os {
  interface expand {
   /**
    * Expand replaces ${var} or $var in the string based on the mapping function.
-   * For example, [os.ExpandEnv](s) is equivalent to [os.Expand](s, [os.Getenv]).
+   * For example, os.ExpandEnv(s) is equivalent to os.Expand(s, os.Getenv).
    */
   (s: string, mapping: (_arg0: string) => string): string
  }
@@ -1322,7 +1296,7 @@ namespace os {
   /**
    * Getenv retrieves the value of the environment variable named by the key.
    * It returns the value, which will be empty if the variable is not present.
-   * To distinguish between an empty value and an unset value, use [LookupEnv].
+   * To distinguish between an empty value and an unset value, use LookupEnv.
    */
   (key: string): string
  }
@@ -1391,7 +1365,7 @@ namespace os {
  }
  interface newSyscallError {
   /**
-   * NewSyscallError returns, as an error, a new [SyscallError]
+   * NewSyscallError returns, as an error, a new SyscallError
    * with the given system call name and error details.
    * As a convenience, if err is nil, NewSyscallError returns nil.
    */
@@ -1399,55 +1373,53 @@ namespace os {
  }
  interface isExist {
   /**
-   * IsExist returns a boolean indicating whether its argument is known to report
-   * that a file or directory already exists. It is satisfied by [ErrExist] as
+   * IsExist returns a boolean indicating whether the error is known to report
+   * that a file or directory already exists. It is satisfied by ErrExist as
    * well as some syscall errors.
    * 
-   * This function predates [errors.Is]. It only supports errors returned by
+   * This function predates errors.Is. It only supports errors returned by
    * the os package. New code should use errors.Is(err, fs.ErrExist).
    */
   (err: Error): boolean
  }
  interface isNotExist {
   /**
-   * IsNotExist returns a boolean indicating whether its argument is known to
+   * IsNotExist returns a boolean indicating whether the error is known to
    * report that a file or directory does not exist. It is satisfied by
-   * [ErrNotExist] as well as some syscall errors.
+   * ErrNotExist as well as some syscall errors.
    * 
-   * This function predates [errors.Is]. It only supports errors returned by
+   * This function predates errors.Is. It only supports errors returned by
    * the os package. New code should use errors.Is(err, fs.ErrNotExist).
    */
   (err: Error): boolean
  }
  interface isPermission {
   /**
-   * IsPermission returns a boolean indicating whether its argument is known to
-   * report that permission is denied. It is satisfied by [ErrPermission] as well
+   * IsPermission returns a boolean indicating whether the error is known to
+   * report that permission is denied. It is satisfied by ErrPermission as well
    * as some syscall errors.
    * 
-   * This function predates [errors.Is]. It only supports errors returned by
+   * This function predates errors.Is. It only supports errors returned by
    * the os package. New code should use errors.Is(err, fs.ErrPermission).
    */
   (err: Error): boolean
  }
  interface isTimeout {
   /**
-   * IsTimeout returns a boolean indicating whether its argument is known
+   * IsTimeout returns a boolean indicating whether the error is known
    * to report that a timeout occurred.
    * 
-   * This function predates [errors.Is], and the notion of whether an
+   * This function predates errors.Is, and the notion of whether an
    * error indicates a timeout can be ambiguous. For example, the Unix
    * error EWOULDBLOCK sometimes indicates a timeout and sometimes does not.
    * New code should use errors.Is with a value appropriate to the call
-   * returning the error, such as [os.ErrDeadlineExceeded].
+   * returning the error, such as os.ErrDeadlineExceeded.
    */
   (err: Error): boolean
  }
  interface syscallErrorType extends syscall.Errno{}
- interface processMode extends Number{}
- interface processStatus extends Number{}
  /**
-  * Process stores the information about a process created by [StartProcess].
+  * Process stores the information about a process created by StartProcess.
   */
  interface Process {
   pid: number
@@ -1513,7 +1485,7 @@ namespace os {
   /**
    * FindProcess looks for a running process by its pid.
    * 
-   * The [Process] it returns can be used to obtain information
+   * The Process it returns can be used to obtain information
    * about the underlying operating system process.
    * 
    * On Unix systems, FindProcess always succeeds and returns a Process
@@ -1526,32 +1498,32 @@ namespace os {
  interface startProcess {
   /**
    * StartProcess starts a new process with the program, arguments and attributes
-   * specified by name, argv and attr. The argv slice will become [os.Args] in the
+   * specified by name, argv and attr. The argv slice will become os.Args in the
    * new process, so it normally starts with the program name.
    * 
    * If the calling goroutine has locked the operating system thread
-   * with [runtime.LockOSThread] and modified any inheritable OS-level
+   * with runtime.LockOSThread and modified any inheritable OS-level
    * thread state (for example, Linux or Plan 9 name spaces), the new
    * process will inherit the caller's thread state.
    * 
-   * StartProcess is a low-level interface. The [os/exec] package provides
+   * StartProcess is a low-level interface. The os/exec package provides
    * higher-level interfaces.
    * 
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    */
   (name: string, argv: Array<string>, attr: ProcAttr): (Process)
  }
  interface Process {
   /**
-   * Release releases any resources associated with the [Process] p,
+   * Release releases any resources associated with the Process p,
    * rendering it unusable in the future.
-   * Release only needs to be called if [Process.Wait] is not.
+   * Release only needs to be called if Wait is not.
    */
   release(): void
  }
  interface Process {
   /**
-   * Kill causes the [Process] to exit immediately. Kill does not wait until
+   * Kill causes the Process to exit immediately. Kill does not wait until
    * the Process has actually exited. This only kills the Process itself,
    * not any other processes it may have started.
    */
@@ -1559,7 +1531,7 @@ namespace os {
  }
  interface Process {
   /**
-   * Wait waits for the [Process] to exit, and then returns a
+   * Wait waits for the Process to exit, and then returns a
    * ProcessState describing its status and an error, if any.
    * Wait releases any resources associated with the Process.
    * On most operating systems, the Process must be a child
@@ -1569,8 +1541,8 @@ namespace os {
  }
  interface Process {
   /**
-   * Signal sends a signal to the [Process].
-   * Sending [Interrupt] on Windows is not implemented.
+   * Signal sends a signal to the Process.
+   * Sending Interrupt on Windows is not implemented.
    */
   signal(sig: Signal): void
  }
@@ -1605,7 +1577,7 @@ namespace os {
   /**
    * Sys returns system-dependent exit information about
    * the process. Convert it to the appropriate underlying
-   * type, such as [syscall.WaitStatus] on Unix, to access its contents.
+   * type, such as syscall.WaitStatus on Unix, to access its contents.
    */
   sys(): any
  }
@@ -1613,7 +1585,7 @@ namespace os {
   /**
    * SysUsage returns system-dependent resource usage information about
    * the exited process. Convert it to the appropriate underlying
-   * type, such as [*syscall.Rusage] on Unix, to access its contents.
+   * type, such as *syscall.Rusage on Unix, to access its contents.
    * (On Unix, *syscall.Rusage matches struct rusage as defined in the
    * getrusage(2) manual page.)
    */
@@ -1647,7 +1619,7 @@ namespace os {
    * pointing to the correct executable. If a symlink was used to start
    * the process, depending on the operating system, the result might
    * be the symlink or the path it pointed to. If a stable result is
-   * needed, [path/filepath.EvalSymlinks] might help.
+   * needed, path/filepath.EvalSymlinks might help.
    * 
    * Executable returns an absolute path unless an error occurred.
    * 
@@ -1659,8 +1631,6 @@ namespace os {
  interface File {
   /**
    * Name returns the name of the file as presented to Open.
-   * 
-   * It is safe to call Name after [Close].
    */
   name(): string
  }
@@ -1721,8 +1691,8 @@ namespace os {
   * than ReadFrom. This is used to permit ReadFrom to call io.Copy
   * without leading to a recursive call to ReadFrom.
   */
- type _subQGbno = noReadFrom&File
- interface fileWithoutReadFrom extends _subQGbno {
+ type _subNkWuI = noReadFrom&File
+ interface fileWithoutReadFrom extends _subNkWuI {
  }
  interface File {
   /**
@@ -1766,8 +1736,8 @@ namespace os {
   * than WriteTo. This is used to permit WriteTo to call io.Copy
   * without leading to a recursive call to WriteTo.
   */
- type _subzUnAX = noWriteTo&File
- interface fileWithoutWriteTo extends _subzUnAX {
+ type _subNCUrG = noWriteTo&File
+ interface fileWithoutWriteTo extends _subNCUrG {
  }
  interface File {
   /**
@@ -1813,7 +1783,7 @@ namespace os {
  interface create {
   /**
    * Create creates or truncates the named file. If the file already exists,
-   * it is truncated. If the file does not exist, it is created with mode 0o666
+   * it is truncated. If the file does not exist, it is created with mode 0666
    * (before umask). If successful, methods on the returned File can
    * be used for I/O; the associated file descriptor has mode O_RDWR.
    * If there is an error, it will be of type *PathError.
@@ -1926,11 +1896,11 @@ namespace os {
    * On Unix, the mode's permission bits, ModeSetuid, ModeSetgid, and
    * ModeSticky are used.
    * 
-   * On Windows, only the 0o200 bit (owner writable) of mode is used; it
+   * On Windows, only the 0200 bit (owner writable) of mode is used; it
    * controls whether the file's read-only attribute is set or cleared.
    * The other bits are currently unused. For compatibility with Go 1.12
-   * and earlier, use a non-zero mode. Use mode 0o400 for a read-only
-   * file and 0o600 for a readable+writable file.
+   * and earlier, use a non-zero mode. Use mode 0400 for a read-only
+   * file and 0600 for a readable+writable file.
    * 
    * On Plan 9, the mode's permission bits, ModeAppend, ModeExclusive,
    * and ModeTemporary are used.
@@ -2064,9 +2034,9 @@ namespace os {
  }
  interface File {
   /**
-   * Close closes the [File], rendering it unusable for I/O.
-   * On files that support [File.SetDeadline], any pending I/O operations will
-   * be canceled and return immediately with an [ErrClosed] error.
+   * Close closes the File, rendering it unusable for I/O.
+   * On files that support SetDeadline, any pending I/O operations will
+   * be canceled and return immediately with an ErrClosed error.
    * Close will return an error if it has already been called.
    */
   close(): void
@@ -2076,9 +2046,9 @@ namespace os {
    * Chown changes the numeric uid and gid of the named file.
    * If the file is a symbolic link, it changes the uid and gid of the link's target.
    * A uid or gid of -1 means to not change that value.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    * 
-   * On Windows or Plan 9, Chown always returns the [syscall.EWINDOWS] or
+   * On Windows or Plan 9, Chown always returns the syscall.EWINDOWS or
    * EPLAN9 error, wrapped in *PathError.
    */
   (name: string, uid: number, gid: number): void
@@ -2087,9 +2057,9 @@ namespace os {
   /**
    * Lchown changes the numeric uid and gid of the named file.
    * If the file is a symbolic link, it changes the uid and gid of the link itself.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    * 
-   * On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
+   * On Windows, it always returns the syscall.EWINDOWS error, wrapped
    * in *PathError.
    */
   (name: string, uid: number, gid: number): void
@@ -2097,9 +2067,9 @@ namespace os {
  interface File {
   /**
    * Chown changes the numeric uid and gid of the named file.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    * 
-   * On Windows, it always returns the [syscall.EWINDOWS] error, wrapped
+   * On Windows, it always returns the syscall.EWINDOWS error, wrapped
    * in *PathError.
    */
   chown(uid: number, gid: number): void
@@ -2108,7 +2078,7 @@ namespace os {
   /**
    * Truncate changes the size of the file.
    * It does not change the I/O offset.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    */
   truncate(size: number): void
  }
@@ -2124,11 +2094,11 @@ namespace os {
   /**
    * Chtimes changes the access and modification times of the named
    * file, similar to the Unix utime() or utimes() functions.
-   * A zero [time.Time] value will leave the corresponding file time unchanged.
+   * A zero time.Time value will leave the corresponding file time unchanged.
    * 
    * The underlying filesystem may truncate or round the values to a
    * less precise time unit.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    */
   (name: string, atime: time.Time, mtime: time.Time): void
  }
@@ -2136,7 +2106,7 @@ namespace os {
   /**
    * Chdir changes the current working directory to the file,
    * which must be a directory.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    */
   chdir(): void
  }
@@ -2153,11 +2123,11 @@ namespace os {
    * Fd returns the integer Unix file descriptor referencing the open file.
    * If f is closed, the file descriptor becomes invalid.
    * If f is garbage collected, a finalizer may close the file descriptor,
-   * making it invalid; see [runtime.SetFinalizer] for more information on when
-   * a finalizer might be run. On Unix systems this will cause the [File.SetDeadline]
+   * making it invalid; see runtime.SetFinalizer for more information on when
+   * a finalizer might be run. On Unix systems this will cause the SetDeadline
    * methods to stop working.
    * Because file descriptors can be reused, the returned file descriptor may
-   * only be closed through the [File.Close] method of f, or by its finalizer during
+   * only be closed through the Close method of f, or by its finalizer during
    * garbage collection. Otherwise, during garbage collection the finalizer
    * may close an unrelated file descriptor with the same (reused) number.
    * 
@@ -2258,7 +2228,7 @@ namespace os {
    * It removes everything it can but returns the first error
    * it encounters. If the path does not exist, RemoveAll
    * returns nil (no error).
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    */
   (path: string): void
  }
@@ -2311,7 +2281,7 @@ namespace os {
   /**
    * Getgroups returns a list of the numeric ids of groups that the caller belongs to.
    * 
-   * On Windows, it returns [syscall.EWINDOWS]. See the [os/user] package
+   * On Windows, it returns syscall.EWINDOWS. See the os/user package
    * for a possible alternative.
    */
   (): Array<number>
@@ -2342,17 +2312,17 @@ namespace os {
  }
  interface stat {
   /**
-   * Stat returns a [FileInfo] describing the named file.
-   * If there is an error, it will be of type [*PathError].
+   * Stat returns a FileInfo describing the named file.
+   * If there is an error, it will be of type *PathError.
    */
   (name: string): FileInfo
  }
  interface lstat {
   /**
-   * Lstat returns a [FileInfo] describing the named file.
+   * Lstat returns a FileInfo describing the named file.
    * If the file is a symbolic link, the returned FileInfo
    * describes the symbolic link. Lstat makes no attempt to follow the link.
-   * If there is an error, it will be of type [*PathError].
+   * If there is an error, it will be of type *PathError.
    * 
    * On Windows, if the file is a reparse point that is a surrogate for another
    * named entity (such as a symbolic link or mounted folder), the returned
@@ -2362,8 +2332,8 @@ namespace os {
  }
  interface File {
   /**
-   * Stat returns the [FileInfo] structure describing file.
-   * If there is an error, it will be of type [*PathError].
+   * Stat returns the FileInfo structure describing file.
+   * If there is an error, it will be of type *PathError.
    */
   stat(): FileInfo
  }
@@ -2379,8 +2349,7 @@ namespace os {
    * opens the file for reading and writing, and returns the resulting file.
    * The filename is generated by taking pattern and adding a random string to the end.
    * If pattern includes a "*", the random string replaces the last "*".
-   * The file is created with mode 0o600 (before umask).
-   * If dir is the empty string, CreateTemp uses the default directory for temporary files, as returned by [TempDir].
+   * If dir is the empty string, CreateTemp uses the default directory for temporary files, as returned by TempDir.
    * Multiple programs or goroutines calling CreateTemp simultaneously will not choose the same file.
    * The caller can use the file's Name method to find the pathname of the file.
    * It is the caller's responsibility to remove the file when it is no longer needed.
@@ -2393,7 +2362,6 @@ namespace os {
    * and returns the pathname of the new directory.
    * The new directory's name is generated by adding a random string to the end of pattern.
    * If pattern includes a "*", the random string replaces the last "*" instead.
-   * The directory is created with mode 0o700 (before umask).
    * If dir is the empty string, MkdirTemp uses the default directory for temporary files, as returned by TempDir.
    * Multiple programs or goroutines calling MkdirTemp simultaneously will not choose the same directory.
    * It is the caller's responsibility to remove the directory when it is no longer needed.
@@ -2408,14 +2376,12 @@ namespace os {
  }
  /**
   * File represents an open file descriptor.
-  * 
-  * The methods of File are safe for concurrent use.
   */
- type _subJHFOr = file
- interface File extends _subJHFOr {
+ type _subgrlkI = file
+ interface File extends _subgrlkI {
  }
  /**
-  * A FileInfo describes a file and is returned by [Stat] and [Lstat].
+  * A FileInfo describes a file and is returned by Stat and Lstat.
   */
  interface FileInfo extends fs.FileInfo{}
  /**
@@ -2423,7 +2389,7 @@ namespace os {
   * The bits have the same definition on all systems, so that
   * information about files can be moved from one system
   * to another portably. Not all bits apply to all systems.
-  * The only required bit is [ModeDir] for directories.
+  * The only required bit is ModeDir for directories.
   */
  interface FileMode extends fs.FileMode{}
  interface fileStat {
@@ -2438,7 +2404,7 @@ namespace os {
    * For example, on Unix this means that the device and inode fields
    * of the two underlying structures are identical; on other systems
    * the decision may be based on the path names.
-   * SameFile only applies to results returned by this package's [Stat].
+   * SameFile only applies to results returned by this package's Stat.
    * It returns false in other cases.
    */
   (fi1: FileInfo, fi2: FileInfo): boolean
@@ -2459,6 +2425,142 @@ namespace os {
  }
  interface fileStat {
   sys(): any
+ }
+}
+
+namespace security {
+ interface s256Challenge {
+  /**
+   * S256Challenge creates base64 encoded sha256 challenge string derived from code.
+   * The padding of the result base64 string is stripped per [RFC 7636].
+   * 
+   * [RFC 7636]: https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
+   */
+  (code: string): string
+ }
+ interface md5 {
+  /**
+   * MD5 creates md5 hash from the provided plain text.
+   */
+  (text: string): string
+ }
+ interface sha256 {
+  /**
+   * SHA256 creates sha256 hash as defined in FIPS 180-4 from the provided text.
+   */
+  (text: string): string
+ }
+ interface sha512 {
+  /**
+   * SHA512 creates sha512 hash as defined in FIPS 180-4 from the provided text.
+   */
+  (text: string): string
+ }
+ interface hs256 {
+  /**
+   * HS256 creates a HMAC hash with sha256 digest algorithm.
+   */
+  (text: string, secret: string): string
+ }
+ interface hs512 {
+  /**
+   * HS512 creates a HMAC hash with sha512 digest algorithm.
+   */
+  (text: string, secret: string): string
+ }
+ interface equal {
+  /**
+   * Equal compares two hash strings for equality without leaking timing information.
+   */
+  (hash1: string, hash2: string): boolean
+ }
+ // @ts-ignore
+ import crand = rand
+ interface encrypt {
+  /**
+   * Encrypt encrypts "data" with the specified "key" (must be valid 32 char AES key).
+   * 
+   * This method uses AES-256-GCM block cypher mode.
+   */
+  (data: string|Array<number>, key: string): string
+ }
+ interface decrypt {
+  /**
+   * Decrypt decrypts encrypted text with key (must be valid 32 chars AES key).
+   * 
+   * This method uses AES-256-GCM block cypher mode.
+   */
+  (cipherText: string, key: string): string|Array<number>
+ }
+ interface parseUnverifiedJWT {
+  /**
+   * ParseUnverifiedJWT parses JWT and returns its claims
+   * but DOES NOT verify the signature.
+   * 
+   * It verifies only the exp, iat and nbf claims.
+   */
+  (token: string): jwt.MapClaims
+ }
+ interface parseJWT {
+  /**
+   * ParseJWT verifies and parses JWT and returns its claims.
+   */
+  (token: string, verificationKey: string): jwt.MapClaims
+ }
+ interface newJWT {
+  /**
+   * NewJWT generates and returns new HS256 signed JWT.
+   */
+  (payload: jwt.MapClaims, signingKey: string, secondsDuration: number): string
+ }
+ interface newToken {
+  /**
+   * Deprecated:
+   * Consider replacing with NewJWT().
+   * 
+   * NewToken is a legacy alias for NewJWT that generates a HS256 signed JWT.
+   */
+  (payload: jwt.MapClaims, signingKey: string, secondsDuration: number): string
+ }
+ // @ts-ignore
+ import cryptoRand = rand
+ // @ts-ignore
+ import mathRand = rand
+ interface randomString {
+  /**
+   * RandomString generates a cryptographically random string with the specified length.
+   * 
+   * The generated string matches [A-Za-z0-9]+ and it's transparent to URL-encoding.
+   */
+  (length: number): string
+ }
+ interface randomStringWithAlphabet {
+  /**
+   * RandomStringWithAlphabet generates a cryptographically random string
+   * with the specified length and characters set.
+   * 
+   * It panics if for some reason rand.Int returns a non-nil error.
+   */
+  (length: number, alphabet: string): string
+ }
+ interface pseudorandomString {
+  /**
+   * PseudorandomString generates a pseudorandom string with the specified length.
+   * 
+   * The generated string matches [A-Za-z0-9]+ and it's transparent to URL-encoding.
+   * 
+   * For a cryptographically random string (but a little bit slower) use RandomString instead.
+   */
+  (length: number): string
+ }
+ interface pseudorandomStringWithAlphabet {
+  /**
+   * PseudorandomStringWithAlphabet generates a pseudorandom string
+   * with the specified length and characters set.
+   * 
+   * For a cryptographically random (but a little bit slower) use RandomStringWithAlphabet instead.
+   */
+  (length: number, alphabet: string): string
  }
 }
 
@@ -2515,6 +2617,14 @@ namespace filepath {
    * is malformed.
    */
   (pattern: string): Array<string>
+ }
+ /**
+  * A lazybuf is a lazily constructed path buffer.
+  * It supports append, reading previously appended bytes,
+  * and retrieving the final string. It does not allocate a buffer
+  * to hold the output until that output diverges from s.
+  */
+ interface lazybuf {
  }
  interface clean {
   /**
@@ -2573,19 +2683,6 @@ namespace filepath {
    */
   (path: string): boolean
  }
- interface localize {
-  /**
-   * Localize converts a slash-separated path into an operating system path.
-   * The input path must be a valid path as reported by [io/fs.ValidPath].
-   * 
-   * Localize returns an error if the path cannot be represented by the operating system.
-   * For example, the path a\b is rejected on Windows, on which \ is a separator
-   * character and cannot be part of a filename.
-   * 
-   * The path returned by Localize will always be local, as reported by IsLocal.
-   */
-  (path: string): string
- }
  interface toSlash {
   /**
    * ToSlash returns the result of replacing each separator character
@@ -2599,9 +2696,6 @@ namespace filepath {
    * FromSlash returns the result of replacing each slash ('/') character
    * in path with a separator character. Multiple slashes are replaced
    * by multiple separators.
-   * 
-   * See also the Localize function, which converts a slash-separated path
-   * as used by the io/fs package to an operating system path.
    */
   (path: string): string
  }
@@ -2654,12 +2748,6 @@ namespace filepath {
    * EvalSymlinks calls [Clean] on the result.
    */
   (path: string): string
- }
- interface isAbs {
-  /**
-   * IsAbs reports whether the path is absolute.
-   */
-  (path: string): boolean
  }
  interface abs {
   /**
@@ -2793,6 +2881,12 @@ namespace filepath {
    */
   (path: string): string
  }
+ interface isAbs {
+  /**
+   * IsAbs reports whether the path is absolute.
+   */
+  (path: string): boolean
+ }
  interface hasPrefix {
   /**
    * HasPrefix exists for historical compatibility and should not be used.
@@ -2819,6 +2913,25 @@ namespace ozzo_validation {
   setMessage(_arg0: string): Error
   params(): _TygojaDict
   setParams(_arg0: _TygojaDict): Error
+ }
+}
+
+namespace middleware {
+ interface bodyLimit {
+  /**
+   * BodyLimit returns a BodyLimit middleware.
+   * 
+   * BodyLimit middleware sets the maximum allowed size for a request body, if the size exceeds the configured limit, it
+   * sends "413 - Request Entity Too Large" response. The BodyLimit is determined based on both `Content-Length` request
+   * header and actual content read, which makes it super secure.
+   */
+  (limitBytes: number): echo.MiddlewareFunc
+ }
+ interface gzip {
+  /**
+   * Gzip returns a middleware which compresses HTTP response using gzip compression scheme.
+   */
+  (): echo.MiddlewareFunc
  }
 }
 
@@ -3158,14 +3271,14 @@ namespace dbx {
  /**
   * MssqlBuilder is the builder for SQL Server databases.
   */
- type _subXcJPM = BaseBuilder
- interface MssqlBuilder extends _subXcJPM {
+ type _subWhRkN = BaseBuilder
+ interface MssqlBuilder extends _subWhRkN {
  }
  /**
   * MssqlQueryBuilder is the query builder for SQL Server databases.
   */
- type _subWcWPA = BaseQueryBuilder
- interface MssqlQueryBuilder extends _subWcWPA {
+ type _subxotmd = BaseQueryBuilder
+ interface MssqlQueryBuilder extends _subxotmd {
  }
  interface newMssqlBuilder {
   /**
@@ -3236,8 +3349,8 @@ namespace dbx {
  /**
   * MysqlBuilder is the builder for MySQL databases.
   */
- type _subErsOC = BaseBuilder
- interface MysqlBuilder extends _subErsOC {
+ type _subDBUbQ = BaseBuilder
+ interface MysqlBuilder extends _subDBUbQ {
  }
  interface newMysqlBuilder {
   /**
@@ -3312,14 +3425,14 @@ namespace dbx {
  /**
   * OciBuilder is the builder for Oracle databases.
   */
- type _subPcUPD = BaseBuilder
- interface OciBuilder extends _subPcUPD {
+ type _subLNJhX = BaseBuilder
+ interface OciBuilder extends _subLNJhX {
  }
  /**
   * OciQueryBuilder is the query builder for Oracle databases.
   */
- type _subsNvOu = BaseQueryBuilder
- interface OciQueryBuilder extends _subsNvOu {
+ type _subnycFT = BaseQueryBuilder
+ interface OciQueryBuilder extends _subnycFT {
  }
  interface newOciBuilder {
   /**
@@ -3382,8 +3495,8 @@ namespace dbx {
  /**
   * PgsqlBuilder is the builder for PostgreSQL databases.
   */
- type _submlQbp = BaseBuilder
- interface PgsqlBuilder extends _submlQbp {
+ type _subNqewV = BaseBuilder
+ interface PgsqlBuilder extends _subNqewV {
  }
  interface newPgsqlBuilder {
   /**
@@ -3450,8 +3563,8 @@ namespace dbx {
  /**
   * SqliteBuilder is the builder for SQLite databases.
   */
- type _subRbLKA = BaseBuilder
- interface SqliteBuilder extends _subRbLKA {
+ type _subnVzFA = BaseBuilder
+ interface SqliteBuilder extends _subnVzFA {
  }
  interface newSqliteBuilder {
   /**
@@ -3550,8 +3663,8 @@ namespace dbx {
  /**
   * StandardBuilder is the builder that is used by DB for an unknown driver.
   */
- type _subYlvLr = BaseBuilder
- interface StandardBuilder extends _subYlvLr {
+ type _subeAbzr = BaseBuilder
+ interface StandardBuilder extends _subeAbzr {
  }
  interface newStandardBuilder {
   /**
@@ -3617,8 +3730,8 @@ namespace dbx {
   * DB enhances sql.DB by providing a set of DB-agnostic query building methods.
   * DB allows easier query building and population of data into Go variables.
   */
- type _subXZmGg = Builder
- interface DB extends _subXZmGg {
+ type _subkPbEl = Builder
+ interface DB extends _subkPbEl {
   /**
    * FieldMapper maps struct fields to DB columns. Defaults to DefaultFieldMapFunc.
    */
@@ -4422,8 +4535,8 @@ namespace dbx {
   * Rows enhances sql.Rows by providing additional data query methods.
   * Rows can be obtained by calling Query.Rows(). It is mainly used to populate data row by row.
   */
- type _subCDslK = sql.Rows
- interface Rows extends _subCDslK {
+ type _subbZZdV = sql.Rows
+ interface Rows extends _subbZZdV {
  }
  interface Rows {
   /**
@@ -4781,8 +4894,8 @@ namespace dbx {
   }): string }
  interface structInfo {
  }
- type _subnkbkR = structInfo
- interface structValue extends _subnkbkR {
+ type _subiAfmg = structInfo
+ interface structValue extends _subiAfmg {
  }
  interface fieldInfo {
  }
@@ -4821,8 +4934,8 @@ namespace dbx {
  /**
   * Tx enhances sql.Tx with additional querying methods.
   */
- type _subWeWlx = Builder
- interface Tx extends _subWeWlx {
+ type _subQUpUR = Builder
+ interface Tx extends _subQUpUR {
  }
  interface Tx {
   /**
@@ -4849,7 +4962,7 @@ namespace dbx {
  * pipelines, or redirections typically done by shells. The package
  * behaves more like C's "exec" family of functions. To expand glob
  * patterns, either call the shell directly, taking care to escape any
- * dangerous input, or use the [path/filepath] package's Glob function.
+ * dangerous input, or use the path/filepath package's Glob function.
  * To expand environment variables, use package os's ExpandEnv.
  * 
  * Note that the examples in this package assume a Unix system.
@@ -4858,7 +4971,7 @@ namespace dbx {
  * 
  * # Executables in the current directory
  * 
- * The functions [Command] and [LookPath] look for a program
+ * The functions Command and LookPath look for a program
  * in the directories listed in the current path, following the
  * conventions of the host operating system.
  * Operating systems have for decades included the current
@@ -4869,10 +4982,10 @@ namespace dbx {
  * 
  * To avoid those security problems, as of Go 1.19, this package will not resolve a program
  * using an implicit or explicit path entry relative to the current directory.
- * That is, if you run [LookPath]("go"), it will not successfully return
+ * That is, if you run exec.LookPath("go"), it will not successfully return
  * ./go on Unix nor .\go.exe on Windows, no matter how the path is configured.
  * Instead, if the usual path algorithms would result in that answer,
- * these functions return an error err satisfying [errors.Is](err, [ErrDot]).
+ * these functions return an error err satisfying errors.Is(err, ErrDot).
  * 
  * For example, consider these two program snippets:
  * 
@@ -4937,12 +5050,12 @@ namespace dbx {
 namespace exec {
  interface command {
   /**
-   * Command returns the [Cmd] struct to execute the named program with
+   * Command returns the Cmd struct to execute the named program with
    * the given arguments.
    * 
    * It sets only the Path and Args in the returned structure.
    * 
-   * If name contains no path separators, Command uses [LookPath] to
+   * If name contains no path separators, Command uses LookPath to
    * resolve name to a complete path if possible. Otherwise it uses name
    * directly as Path.
    * 
@@ -4961,142 +5074,6 @@ namespace exec {
    * leaving Args empty.
    */
   (name: string, ...arg: string[]): (Cmd)
- }
-}
-
-namespace security {
- interface s256Challenge {
-  /**
-   * S256Challenge creates base64 encoded sha256 challenge string derived from code.
-   * The padding of the result base64 string is stripped per [RFC 7636].
-   * 
-   * [RFC 7636]: https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
-   */
-  (code: string): string
- }
- interface md5 {
-  /**
-   * MD5 creates md5 hash from the provided plain text.
-   */
-  (text: string): string
- }
- interface sha256 {
-  /**
-   * SHA256 creates sha256 hash as defined in FIPS 180-4 from the provided text.
-   */
-  (text: string): string
- }
- interface sha512 {
-  /**
-   * SHA512 creates sha512 hash as defined in FIPS 180-4 from the provided text.
-   */
-  (text: string): string
- }
- interface hs256 {
-  /**
-   * HS256 creates a HMAC hash with sha256 digest algorithm.
-   */
-  (text: string, secret: string): string
- }
- interface hs512 {
-  /**
-   * HS512 creates a HMAC hash with sha512 digest algorithm.
-   */
-  (text: string, secret: string): string
- }
- interface equal {
-  /**
-   * Equal compares two hash strings for equality without leaking timing information.
-   */
-  (hash1: string, hash2: string): boolean
- }
- // @ts-ignore
- import crand = rand
- interface encrypt {
-  /**
-   * Encrypt encrypts "data" with the specified "key" (must be valid 32 char AES key).
-   * 
-   * This method uses AES-256-GCM block cypher mode.
-   */
-  (data: string|Array<number>, key: string): string
- }
- interface decrypt {
-  /**
-   * Decrypt decrypts encrypted text with key (must be valid 32 chars AES key).
-   * 
-   * This method uses AES-256-GCM block cypher mode.
-   */
-  (cipherText: string, key: string): string|Array<number>
- }
- interface parseUnverifiedJWT {
-  /**
-   * ParseUnverifiedJWT parses JWT and returns its claims
-   * but DOES NOT verify the signature.
-   * 
-   * It verifies only the exp, iat and nbf claims.
-   */
-  (token: string): jwt.MapClaims
- }
- interface parseJWT {
-  /**
-   * ParseJWT verifies and parses JWT and returns its claims.
-   */
-  (token: string, verificationKey: string): jwt.MapClaims
- }
- interface newJWT {
-  /**
-   * NewJWT generates and returns new HS256 signed JWT.
-   */
-  (payload: jwt.MapClaims, signingKey: string, secondsDuration: number): string
- }
- interface newToken {
-  /**
-   * Deprecated:
-   * Consider replacing with NewJWT().
-   * 
-   * NewToken is a legacy alias for NewJWT that generates a HS256 signed JWT.
-   */
-  (payload: jwt.MapClaims, signingKey: string, secondsDuration: number): string
- }
- // @ts-ignore
- import cryptoRand = rand
- // @ts-ignore
- import mathRand = rand
- interface randomString {
-  /**
-   * RandomString generates a cryptographically random string with the specified length.
-   * 
-   * The generated string matches [A-Za-z0-9]+ and it's transparent to URL-encoding.
-   */
-  (length: number): string
- }
- interface randomStringWithAlphabet {
-  /**
-   * RandomStringWithAlphabet generates a cryptographically random string
-   * with the specified length and characters set.
-   * 
-   * It panics if for some reason rand.Int returns a non-nil error.
-   */
-  (length: number, alphabet: string): string
- }
- interface pseudorandomString {
-  /**
-   * PseudorandomString generates a pseudorandom string with the specified length.
-   * 
-   * The generated string matches [A-Za-z0-9]+ and it's transparent to URL-encoding.
-   * 
-   * For a cryptographically random string (but a little bit slower) use RandomString instead.
-   */
-  (length: number): string
- }
- interface pseudorandomStringWithAlphabet {
-  /**
-   * PseudorandomStringWithAlphabet generates a pseudorandom string
-   * with the specified length and characters set.
-   * 
-   * For a cryptographically random (but a little bit slower) use RandomStringWithAlphabet instead.
-   */
-  (length: number, alphabet: string): string
  }
 }
 
@@ -5189,8 +5166,8 @@ namespace filesystem {
    */
   open(): io.ReadSeekCloser
  }
- type _subIhEHH = bytes.Reader
- interface bytesReadSeekCloser extends _subIhEHH {
+ type _subwhxPB = bytes.Reader
+ interface bytesReadSeekCloser extends _subwhxPB {
  }
  interface bytesReadSeekCloser {
   /**
@@ -6336,8 +6313,8 @@ namespace forms {
  /**
   * SettingsUpsert is a [settings.Settings] upsert (create/update) form.
   */
- type _subezsfi = settings.Settings
- interface SettingsUpsert extends _subezsfi {
+ type _subqztkt = settings.Settings
+ interface SettingsUpsert extends _subqztkt {
  }
  interface newSettingsUpsert {
   /**
@@ -6423,25 +6400,6 @@ namespace forms {
    * Submit validates and performs a S3 filesystem connection test.
    */
   submit(): void
- }
-}
-
-namespace middleware {
- interface bodyLimit {
-  /**
-   * BodyLimit returns a BodyLimit middleware.
-   * 
-   * BodyLimit middleware sets the maximum allowed size for a request body, if the size exceeds the configured limit, it
-   * sends "413 - Request Entity Too Large" response. The BodyLimit is determined based on both `Content-Length` request
-   * header and actual content read, which makes it super secure.
-   */
-  (limitBytes: number): echo.MiddlewareFunc
- }
- interface gzip {
-  /**
-   * Gzip returns a middleware which compresses HTTP response using gzip compression scheme.
-   */
-  (): echo.MiddlewareFunc
  }
 }
 
@@ -6783,6 +6741,103 @@ namespace apis {
  }
 }
 
+namespace pocketbase {
+ /**
+  * appWrapper serves as a private CoreApp instance wrapper.
+  */
+ type _suboSAJd = CoreApp
+ interface appWrapper extends _suboSAJd {
+ }
+ /**
+  * PocketBase defines a PocketBase app launcher.
+  * 
+  * It implements [CoreApp] via embedding and all of the app interface methods
+  * could be accessed directly through the instance (eg. PocketBase.DataDir()).
+  */
+ type _subTvnFl = appWrapper
+ interface PocketBase extends _subTvnFl {
+  /**
+   * RootCmd is the main console command
+   */
+  rootCmd?: cobra.Command
+ }
+ /**
+  * Config is the PocketBase initialization config struct.
+  */
+ interface Config {
+  /**
+   * optional default values for the console flags
+   */
+  defaultDev: boolean
+  defaultDataDir: string // if not set, it will fallback to "./pb_data"
+  defaultEncryptionEnv: string
+  /**
+   * hide the default console server info on app startup
+   */
+  hideStartBanner: boolean
+  /**
+   * optional DB configurations
+   */
+  dataMaxOpenConns: number // default to core.DefaultDataMaxOpenConns
+  dataMaxIdleConns: number // default to core.DefaultDataMaxIdleConns
+  logsMaxOpenConns: number // default to core.DefaultLogsMaxOpenConns
+  logsMaxIdleConns: number // default to core.DefaultLogsMaxIdleConns
+ }
+ interface _new {
+  /**
+   * New creates a new PocketBase instance with the default configuration.
+   * Use [NewWithConfig()] if you want to provide a custom configuration.
+   * 
+   * Note that the application will not be initialized/bootstrapped yet,
+   * aka. DB connections, migrations, app settings, etc. will not be accessible.
+   * Everything will be initialized when [Start()] is executed.
+   * If you want to initialize the application before calling [Start()],
+   * then you'll have to manually call [Bootstrap()].
+   */
+  (): (PocketBase)
+ }
+ interface newWithConfig {
+  /**
+   * NewWithConfig creates a new PocketBase instance with the provided config.
+   * 
+   * Note that the application will not be initialized/bootstrapped yet,
+   * aka. DB connections, migrations, app settings, etc. will not be accessible.
+   * Everything will be initialized when [Start()] is executed.
+   * If you want to initialize the application before calling [Start()],
+   * then you'll have to manually call [Bootstrap()].
+   */
+  (config: Config): (PocketBase)
+ }
+ interface PocketBase {
+  /**
+   * Start starts the application, aka. registers the default system
+   * commands (serve, migrate, version) and executes pb.RootCmd.
+   */
+  start(): void
+ }
+ interface PocketBase {
+  /**
+   * Execute initializes the application (if not already) and executes
+   * the pb.RootCmd with graceful shutdown support.
+   * 
+   * This method differs from pb.Start() by not registering the default
+   * system commands!
+   */
+  execute(): void
+ }
+ /**
+  * coloredWriter is a small wrapper struct to construct a [color.Color] writter.
+  */
+ interface coloredWriter {
+ }
+ interface coloredWriter {
+  /**
+   * Write writes the p bytes using the colored writer.
+   */
+  write(p: string|Array<number>): number
+ }
+}
+
 /**
  * Package template is a thin wrapper around the standard html/template
  * and text/template packages that implements a convenient registry to
@@ -6888,103 +6943,6 @@ namespace template {
  }
 }
 
-namespace pocketbase {
- /**
-  * appWrapper serves as a private CoreApp instance wrapper.
-  */
- type _subbEwaR = CoreApp
- interface appWrapper extends _subbEwaR {
- }
- /**
-  * PocketBase defines a PocketBase app launcher.
-  * 
-  * It implements [CoreApp] via embedding and all of the app interface methods
-  * could be accessed directly through the instance (eg. PocketBase.DataDir()).
-  */
- type _subbKhhl = appWrapper
- interface PocketBase extends _subbKhhl {
-  /**
-   * RootCmd is the main console command
-   */
-  rootCmd?: cobra.Command
- }
- /**
-  * Config is the PocketBase initialization config struct.
-  */
- interface Config {
-  /**
-   * optional default values for the console flags
-   */
-  defaultDev: boolean
-  defaultDataDir: string // if not set, it will fallback to "./pb_data"
-  defaultEncryptionEnv: string
-  /**
-   * hide the default console server info on app startup
-   */
-  hideStartBanner: boolean
-  /**
-   * optional DB configurations
-   */
-  dataMaxOpenConns: number // default to core.DefaultDataMaxOpenConns
-  dataMaxIdleConns: number // default to core.DefaultDataMaxIdleConns
-  logsMaxOpenConns: number // default to core.DefaultLogsMaxOpenConns
-  logsMaxIdleConns: number // default to core.DefaultLogsMaxIdleConns
- }
- interface _new {
-  /**
-   * New creates a new PocketBase instance with the default configuration.
-   * Use [NewWithConfig()] if you want to provide a custom configuration.
-   * 
-   * Note that the application will not be initialized/bootstrapped yet,
-   * aka. DB connections, migrations, app settings, etc. will not be accessible.
-   * Everything will be initialized when [Start()] is executed.
-   * If you want to initialize the application before calling [Start()],
-   * then you'll have to manually call [Bootstrap()].
-   */
-  (): (PocketBase)
- }
- interface newWithConfig {
-  /**
-   * NewWithConfig creates a new PocketBase instance with the provided config.
-   * 
-   * Note that the application will not be initialized/bootstrapped yet,
-   * aka. DB connections, migrations, app settings, etc. will not be accessible.
-   * Everything will be initialized when [Start()] is executed.
-   * If you want to initialize the application before calling [Start()],
-   * then you'll have to manually call [Bootstrap()].
-   */
-  (config: Config): (PocketBase)
- }
- interface PocketBase {
-  /**
-   * Start starts the application, aka. registers the default system
-   * commands (serve, migrate, version) and executes pb.RootCmd.
-   */
-  start(): void
- }
- interface PocketBase {
-  /**
-   * Execute initializes the application (if not already) and executes
-   * the pb.RootCmd with graceful shutdown support.
-   * 
-   * This method differs from pb.Start() by not registering the default
-   * system commands!
-   */
-  execute(): void
- }
- /**
-  * coloredWriter is a small wrapper struct to construct a [color.Color] writter.
-  */
- interface coloredWriter {
- }
- interface coloredWriter {
-  /**
-   * Write writes the p bytes using the colored writer.
-   */
-  write(p: string|Array<number>): number
- }
-}
-
 /**
  * Package io provides basic interfaces to I/O primitives.
  * Its primary job is to wrap existing implementations of such primitives,
@@ -7063,8 +7021,8 @@ namespace io {
  */
 namespace bytes {
  /**
-  * A Reader implements the [io.Reader], [io.ReaderAt], [io.WriterTo], [io.Seeker],
-  * [io.ByteScanner], and [io.RuneScanner] interfaces by reading from
+  * A Reader implements the io.Reader, io.ReaderAt, io.WriterTo, io.Seeker,
+  * io.ByteScanner, and io.RuneScanner interfaces by reading from
   * a byte slice.
   * Unlike a [Buffer], a Reader is read-only and supports seeking.
   * The zero value for Reader operates like a Reader of an empty slice.
@@ -7136,7 +7094,7 @@ namespace bytes {
  }
  interface Reader {
   /**
-   * Reset resets the [Reader] to be reading from b.
+   * Reset resets the [Reader.Reader] to be reading from b.
    */
   reset(b: string|Array<number>): void
  }
@@ -7157,7 +7115,7 @@ namespace bytes {
  * the manuals for the appropriate operating system.
  * These calls return err == nil to indicate success; otherwise
  * err is an operating system error describing the failure.
- * On most systems, that error has type [Errno].
+ * On most systems, that error has type syscall.Errno.
  * 
  * NOTE: Most of the functions, types, and constants defined in
  * this package are also available in the [golang.org/x/sys] package.
@@ -7169,12 +7127,7 @@ namespace syscall {
  interface SysProcAttr {
   chroot: string // Chroot.
   credential?: Credential // Credential.
-  /**
-   * Ptrace tells the child to call ptrace(PTRACE_TRACEME).
-   * Call runtime.LockOSThread before starting a process with this set,
-   * and don't call UnlockOSThread until done with PtraceSyscall calls.
-   */
-  ptrace: boolean
+  ptrace: boolean // Enable tracing.
   setsid: boolean // Create session.
   /**
    * Setpgid sets the process group ID of the child to Pgid,
@@ -7188,8 +7141,8 @@ namespace syscall {
    * This is only meaningful if Setsid is true.
    */
   setctty: boolean
-  noctty: boolean // Detach fd 0 from controlling terminal.
-  ctty: number // Controlling TTY fd.
+  noctty: boolean // Detach fd 0 from controlling terminal
+  ctty: number // Controlling TTY fd
   /**
    * Foreground places the child process group in the foreground.
    * This implies Setpgid. The Ctty field must be set to
@@ -7199,33 +7152,6 @@ namespace syscall {
    */
   foreground: boolean
   pgid: number // Child's process group ID if Setpgid.
-  /**
-   * Pdeathsig, if non-zero, is a signal that the kernel will send to
-   * the child process when the creating thread dies. Note that the signal
-   * is sent on thread termination, which may happen before process termination.
-   * There are more details at https://go.dev/issue/27505.
-   */
-  pdeathsig: Signal
-  cloneflags: number // Flags for clone calls.
-  unshareflags: number // Flags for unshare calls.
-  uidMappings: Array<SysProcIDMap> // User ID mappings for user namespaces.
-  gidMappings: Array<SysProcIDMap> // Group ID mappings for user namespaces.
-  /**
-   * GidMappingsEnableSetgroups enabling setgroups syscall.
-   * If false, then setgroups syscall will be disabled for the child process.
-   * This parameter is no-op if GidMappings == nil. Otherwise for unprivileged
-   * users this should be set to false for mappings work.
-   */
-  gidMappingsEnableSetgroups: boolean
-  ambientCaps: Array<number> // Ambient capabilities.
-  useCgroupFD: boolean // Whether to make use of the CgroupFD field.
-  cgroupFD: number // File descriptor of a cgroup to put the new process into.
-  /**
-   * PidFD, if not nil, is used to store the pidfd of a child, if the
-   * functionality is supported by the kernel, or -1. Note *PidFD is
-   * changed only if the process starts successfully.
-   */
-  pidFD?: number
  }
  // @ts-ignore
  import errorspkg = errors
@@ -7257,8 +7183,6 @@ namespace syscall {
    */
   write(f: (fd: number) => boolean): void
  }
- // @ts-ignore
- import runtimesyscall = syscall
  /**
   * An Errno is an unsigned number describing an error condition.
   * It implements the error interface. The zero Errno is by convention
@@ -7271,7 +7195,7 @@ namespace syscall {
   * 	}
   * ```
   * 
-  * Errno values can be tested against error values using [errors.Is].
+  * Errno values can be tested against error values using errors.Is.
   * For example:
   * 
   * ```
@@ -7306,7 +7230,7 @@ namespace syscall {
  * changes for clock synchronization, and a “monotonic clock,” which is
  * not. The general rule is that the wall clock is for telling time and
  * the monotonic clock is for measuring time. Rather than split the API,
- * in this package the Time returned by [time.Now] contains both a wall
+ * in this package the Time returned by time.Now contains both a wall
  * clock reading and a monotonic clock reading; later time-telling
  * operations use the wall clock reading, but later time-measuring
  * operations, specifically comparisons and subtractions, use the
@@ -7323,7 +7247,7 @@ namespace syscall {
  * 	elapsed := t.Sub(start)
  * ```
  * 
- * Other idioms, such as [time.Since](start), [time.Until](deadline), and
+ * Other idioms, such as time.Since(start), time.Until(deadline), and
  * time.Now().Before(deadline), are similarly robust against wall clock
  * resets.
  * 
@@ -7348,26 +7272,23 @@ namespace syscall {
  * 
  * On some systems the monotonic clock will stop if the computer goes to sleep.
  * On such a system, t.Sub(u) may not accurately reflect the actual
- * time that passed between t and u. The same applies to other functions and
- * methods that subtract times, such as [Since], [Until], [Before], [After],
- * [Add], [Sub], [Equal] and [Compare]. In some cases, you may need to strip
- * the monotonic clock to get accurate results.
+ * time that passed between t and u.
  * 
  * Because the monotonic clock reading has no meaning outside
  * the current process, the serialized forms generated by t.GobEncode,
  * t.MarshalBinary, t.MarshalJSON, and t.MarshalText omit the monotonic
  * clock reading, and t.Format provides no format for it. Similarly, the
- * constructors [time.Date], [time.Parse], [time.ParseInLocation], and [time.Unix],
+ * constructors time.Date, time.Parse, time.ParseInLocation, and time.Unix,
  * as well as the unmarshalers t.GobDecode, t.UnmarshalBinary.
  * t.UnmarshalJSON, and t.UnmarshalText always create times with
  * no monotonic clock reading.
  * 
- * The monotonic clock reading exists only in [Time] values. It is not
- * a part of [Duration] values or the Unix times returned by t.Unix and
+ * The monotonic clock reading exists only in Time values. It is not
+ * a part of Duration values or the Unix times returned by t.Unix and
  * friends.
  * 
  * Note that the Go == operator compares not just the time instant but
- * also the [Location] and the monotonic clock reading. See the
+ * also the Location and the monotonic clock reading. See the
  * documentation for the Time type for a discussion of equality
  * testing for Time values.
  * 
@@ -7377,11 +7298,10 @@ namespace syscall {
  * 
  * # Timer Resolution
  * 
- * [Timer] resolution varies depending on the Go runtime, the operating system
+ * Timer resolution varies depending on the Go runtime, the operating system
  * and the underlying hardware.
- * On Unix, the resolution is ~1ms.
- * On Windows version 1803 and newer, the resolution is ~0.5ms.
- * On older Windows versions, the default resolution is ~16ms, but
+ * On Unix, the resolution is approximately 1ms.
+ * On Windows, the default resolution is approximately 16ms, but
  * a higher resolution may be requested using [golang.org/x/sys/windows.TimeBeginPeriod].
  */
 namespace time {
@@ -7405,7 +7325,7 @@ namespace time {
  }
  interface Time {
   /**
-   * GoString implements [fmt.GoStringer] and formats t to be printed in Go source
+   * GoString implements fmt.GoStringer and formats t to be printed in Go source
    * code.
    */
   goString(): string
@@ -7414,16 +7334,16 @@ namespace time {
   /**
    * Format returns a textual representation of the time value formatted according
    * to the layout defined by the argument. See the documentation for the
-   * constant called [Layout] to see how to represent the layout format.
+   * constant called Layout to see how to represent the layout format.
    * 
-   * The executable example for [Time.Format] demonstrates the working
+   * The executable example for Time.Format demonstrates the working
    * of the layout string in detail and is a good reference.
    */
   format(layout: string): string
  }
  interface Time {
   /**
-   * AppendFormat is like [Time.Format] but appends the textual
+   * AppendFormat is like Format but appends the textual
    * representation to b and returns the extended buffer.
    */
   appendFormat(b: string|Array<number>, layout: string): string|Array<number>
@@ -7433,27 +7353,27 @@ namespace time {
   * 
   * Programs using times should typically store and pass them as values,
   * not pointers. That is, time variables and struct fields should be of
-  * type [time.Time], not *time.Time.
+  * type time.Time, not *time.Time.
   * 
   * A Time value can be used by multiple goroutines simultaneously except
-  * that the methods [Time.GobDecode], [Time.UnmarshalBinary], [Time.UnmarshalJSON] and
-  * [Time.UnmarshalText] are not concurrency-safe.
+  * that the methods GobDecode, UnmarshalBinary, UnmarshalJSON and
+  * UnmarshalText are not concurrency-safe.
   * 
-  * Time instants can be compared using the [Time.Before], [Time.After], and [Time.Equal] methods.
-  * The [Time.Sub] method subtracts two instants, producing a [Duration].
-  * The [Time.Add] method adds a Time and a Duration, producing a Time.
+  * Time instants can be compared using the Before, After, and Equal methods.
+  * The Sub method subtracts two instants, producing a Duration.
+  * The Add method adds a Time and a Duration, producing a Time.
   * 
   * The zero value of type Time is January 1, year 1, 00:00:00.000000000 UTC.
-  * As this time is unlikely to come up in practice, the [Time.IsZero] method gives
+  * As this time is unlikely to come up in practice, the IsZero method gives
   * a simple way of detecting a time that has not been initialized explicitly.
   * 
-  * Each time has an associated [Location]. The methods [Time.Local], [Time.UTC], and Time.In return a
+  * Each time has an associated Location. The methods Local, UTC, and In return a
   * Time with a specific Location. Changing the Location of a Time value with
   * these methods does not change the actual instant it represents, only the time
   * zone in which to interpret it.
   * 
-  * Representations of a Time value saved by the [Time.GobEncode], [Time.MarshalBinary],
-  * [Time.MarshalJSON], and [Time.MarshalText] methods store the [Time.Location]'s offset, but not
+  * Representations of a Time value saved by the GobEncode, MarshalBinary,
+  * MarshalJSON, and MarshalText methods store the Time.Location's offset, but not
   * the location name. They therefore lose information about Daylight Saving Time.
   * 
   * In addition to the required “wall clock” reading, a Time may contain an optional
@@ -7649,7 +7569,7 @@ namespace time {
    * Round returns the result of rounding d to the nearest multiple of m.
    * The rounding behavior for halfway values is to round away from zero.
    * If the result exceeds the maximum (or minimum)
-   * value that can be stored in a [Duration],
+   * value that can be stored in a Duration,
    * Round returns the maximum (or minimum) duration.
    * If m <= 0, Round returns d unchanged.
    */
@@ -7658,7 +7578,7 @@ namespace time {
  interface Duration {
   /**
    * Abs returns the absolute value of d.
-   * As a special case, [math.MinInt64] is converted to [math.MaxInt64].
+   * As a special case, math.MinInt64 is converted to math.MaxInt64.
    */
   abs(): Duration
  }
@@ -7671,7 +7591,7 @@ namespace time {
  interface Time {
   /**
    * Sub returns the duration t-u. If the result exceeds the maximum (or minimum)
-   * value that can be stored in a [Duration], the maximum (or minimum) duration
+   * value that can be stored in a Duration, the maximum (or minimum) duration
    * will be returned.
    * To compute t-d for a duration d, use t.Add(-d).
    */
@@ -7812,7 +7732,7 @@ namespace time {
  }
  interface Time {
   /**
-   * MarshalJSON implements the [json.Marshaler] interface.
+   * MarshalJSON implements the json.Marshaler interface.
    * The time is a quoted string in the RFC 3339 format with sub-second precision.
    * If the timestamp cannot be represented as valid RFC 3339
    * (e.g., the year is out of range), then an error is reported.
@@ -7821,14 +7741,14 @@ namespace time {
  }
  interface Time {
   /**
-   * UnmarshalJSON implements the [json.Unmarshaler] interface.
+   * UnmarshalJSON implements the json.Unmarshaler interface.
    * The time must be a quoted string in the RFC 3339 format.
    */
   unmarshalJSON(data: string|Array<number>): void
  }
  interface Time {
   /**
-   * MarshalText implements the [encoding.TextMarshaler] interface.
+   * MarshalText implements the encoding.TextMarshaler interface.
    * The time is formatted in RFC 3339 format with sub-second precision.
    * If the timestamp cannot be represented as valid RFC 3339
    * (e.g., the year is out of range), then an error is reported.
@@ -7837,7 +7757,7 @@ namespace time {
  }
  interface Time {
   /**
-   * UnmarshalText implements the [encoding.TextUnmarshaler] interface.
+   * UnmarshalText implements the encoding.TextUnmarshaler interface.
    * The time must be in the RFC 3339 format.
    */
   unmarshalText(data: string|Array<number>): void
@@ -8239,508 +8159,6 @@ namespace fs {
 }
 
 /**
- * Package exec runs external commands. It wraps os.StartProcess to make it
- * easier to remap stdin and stdout, connect I/O with pipes, and do other
- * adjustments.
- * 
- * Unlike the "system" library call from C and other languages, the
- * os/exec package intentionally does not invoke the system shell and
- * does not expand any glob patterns or handle other expansions,
- * pipelines, or redirections typically done by shells. The package
- * behaves more like C's "exec" family of functions. To expand glob
- * patterns, either call the shell directly, taking care to escape any
- * dangerous input, or use the [path/filepath] package's Glob function.
- * To expand environment variables, use package os's ExpandEnv.
- * 
- * Note that the examples in this package assume a Unix system.
- * They may not run on Windows, and they do not run in the Go Playground
- * used by golang.org and godoc.org.
- * 
- * # Executables in the current directory
- * 
- * The functions [Command] and [LookPath] look for a program
- * in the directories listed in the current path, following the
- * conventions of the host operating system.
- * Operating systems have for decades included the current
- * directory in this search, sometimes implicitly and sometimes
- * configured explicitly that way by default.
- * Modern practice is that including the current directory
- * is usually unexpected and often leads to security problems.
- * 
- * To avoid those security problems, as of Go 1.19, this package will not resolve a program
- * using an implicit or explicit path entry relative to the current directory.
- * That is, if you run [LookPath]("go"), it will not successfully return
- * ./go on Unix nor .\go.exe on Windows, no matter how the path is configured.
- * Instead, if the usual path algorithms would result in that answer,
- * these functions return an error err satisfying [errors.Is](err, [ErrDot]).
- * 
- * For example, consider these two program snippets:
- * 
- * ```
- * 	path, err := exec.LookPath("prog")
- * 	if err != nil {
- * 		log.Fatal(err)
- * 	}
- * 	use(path)
- * ```
- * 
- * and
- * 
- * ```
- * 	cmd := exec.Command("prog")
- * 	if err := cmd.Run(); err != nil {
- * 		log.Fatal(err)
- * 	}
- * ```
- * 
- * These will not find and run ./prog or .\prog.exe,
- * no matter how the current path is configured.
- * 
- * Code that always wants to run a program from the current directory
- * can be rewritten to say "./prog" instead of "prog".
- * 
- * Code that insists on including results from relative path entries
- * can instead override the error using an errors.Is check:
- * 
- * ```
- * 	path, err := exec.LookPath("prog")
- * 	if errors.Is(err, exec.ErrDot) {
- * 		err = nil
- * 	}
- * 	if err != nil {
- * 		log.Fatal(err)
- * 	}
- * 	use(path)
- * ```
- * 
- * and
- * 
- * ```
- * 	cmd := exec.Command("prog")
- * 	if errors.Is(cmd.Err, exec.ErrDot) {
- * 		cmd.Err = nil
- * 	}
- * 	if err := cmd.Run(); err != nil {
- * 		log.Fatal(err)
- * 	}
- * ```
- * 
- * Setting the environment variable GODEBUG=execerrdot=0
- * disables generation of ErrDot entirely, temporarily restoring the pre-Go 1.19
- * behavior for programs that are unable to apply more targeted fixes.
- * A future version of Go may remove support for this variable.
- * 
- * Before adding such overrides, make sure you understand the
- * security implications of doing so.
- * See https://go.dev/blog/path-security for more information.
- */
-namespace exec {
- /**
-  * Cmd represents an external command being prepared or run.
-  * 
-  * A Cmd cannot be reused after calling its [Cmd.Run], [Cmd.Output] or [Cmd.CombinedOutput]
-  * methods.
-  */
- interface Cmd {
-  /**
-   * Path is the path of the command to run.
-   * 
-   * This is the only field that must be set to a non-zero
-   * value. If Path is relative, it is evaluated relative
-   * to Dir.
-   */
-  path: string
-  /**
-   * Args holds command line arguments, including the command as Args[0].
-   * If the Args field is empty or nil, Run uses {Path}.
-   * 
-   * In typical use, both Path and Args are set by calling Command.
-   */
-  args: Array<string>
-  /**
-   * Env specifies the environment of the process.
-   * Each entry is of the form "key=value".
-   * If Env is nil, the new process uses the current process's
-   * environment.
-   * If Env contains duplicate environment keys, only the last
-   * value in the slice for each duplicate key is used.
-   * As a special case on Windows, SYSTEMROOT is always added if
-   * missing and not explicitly set to the empty string.
-   */
-  env: Array<string>
-  /**
-   * Dir specifies the working directory of the command.
-   * If Dir is the empty string, Run runs the command in the
-   * calling process's current directory.
-   */
-  dir: string
-  /**
-   * Stdin specifies the process's standard input.
-   * 
-   * If Stdin is nil, the process reads from the null device (os.DevNull).
-   * 
-   * If Stdin is an *os.File, the process's standard input is connected
-   * directly to that file.
-   * 
-   * Otherwise, during the execution of the command a separate
-   * goroutine reads from Stdin and delivers that data to the command
-   * over a pipe. In this case, Wait does not complete until the goroutine
-   * stops copying, either because it has reached the end of Stdin
-   * (EOF or a read error), or because writing to the pipe returned an error,
-   * or because a nonzero WaitDelay was set and expired.
-   */
-  stdin: io.Reader
-  /**
-   * Stdout and Stderr specify the process's standard output and error.
-   * 
-   * If either is nil, Run connects the corresponding file descriptor
-   * to the null device (os.DevNull).
-   * 
-   * If either is an *os.File, the corresponding output from the process
-   * is connected directly to that file.
-   * 
-   * Otherwise, during the execution of the command a separate goroutine
-   * reads from the process over a pipe and delivers that data to the
-   * corresponding Writer. In this case, Wait does not complete until the
-   * goroutine reaches EOF or encounters an error or a nonzero WaitDelay
-   * expires.
-   * 
-   * If Stdout and Stderr are the same writer, and have a type that can
-   * be compared with ==, at most one goroutine at a time will call Write.
-   */
-  stdout: io.Writer
-  stderr: io.Writer
-  /**
-   * ExtraFiles specifies additional open files to be inherited by the
-   * new process. It does not include standard input, standard output, or
-   * standard error. If non-nil, entry i becomes file descriptor 3+i.
-   * 
-   * ExtraFiles is not supported on Windows.
-   */
-  extraFiles: Array<(os.File | undefined)>
-  /**
-   * SysProcAttr holds optional, operating system-specific attributes.
-   * Run passes it to os.StartProcess as the os.ProcAttr's Sys field.
-   */
-  sysProcAttr?: syscall.SysProcAttr
-  /**
-   * Process is the underlying process, once started.
-   */
-  process?: os.Process
-  /**
-   * ProcessState contains information about an exited process.
-   * If the process was started successfully, Wait or Run will
-   * populate its ProcessState when the command completes.
-   */
-  processState?: os.ProcessState
-  err: Error // LookPath error, if any.
-  /**
-   * If Cancel is non-nil, the command must have been created with
-   * CommandContext and Cancel will be called when the command's
-   * Context is done. By default, CommandContext sets Cancel to
-   * call the Kill method on the command's Process.
-   * 
-   * Typically a custom Cancel will send a signal to the command's
-   * Process, but it may instead take other actions to initiate cancellation,
-   * such as closing a stdin or stdout pipe or sending a shutdown request on a
-   * network socket.
-   * 
-   * If the command exits with a success status after Cancel is
-   * called, and Cancel does not return an error equivalent to
-   * os.ErrProcessDone, then Wait and similar methods will return a non-nil
-   * error: either an error wrapping the one returned by Cancel,
-   * or the error from the Context.
-   * (If the command exits with a non-success status, or Cancel
-   * returns an error that wraps os.ErrProcessDone, Wait and similar methods
-   * continue to return the command's usual exit status.)
-   * 
-   * If Cancel is set to nil, nothing will happen immediately when the command's
-   * Context is done, but a nonzero WaitDelay will still take effect. That may
-   * be useful, for example, to work around deadlocks in commands that do not
-   * support shutdown signals but are expected to always finish quickly.
-   * 
-   * Cancel will not be called if Start returns a non-nil error.
-   */
-  cancel: () => void
-  /**
-   * If WaitDelay is non-zero, it bounds the time spent waiting on two sources
-   * of unexpected delay in Wait: a child process that fails to exit after the
-   * associated Context is canceled, and a child process that exits but leaves
-   * its I/O pipes unclosed.
-   * 
-   * The WaitDelay timer starts when either the associated Context is done or a
-   * call to Wait observes that the child process has exited, whichever occurs
-   * first. When the delay has elapsed, the command shuts down the child process
-   * and/or its I/O pipes.
-   * 
-   * If the child process has failed to exit — perhaps because it ignored or
-   * failed to receive a shutdown signal from a Cancel function, or because no
-   * Cancel function was set — then it will be terminated using os.Process.Kill.
-   * 
-   * Then, if the I/O pipes communicating with the child process are still open,
-   * those pipes are closed in order to unblock any goroutines currently blocked
-   * on Read or Write calls.
-   * 
-   * If pipes are closed due to WaitDelay, no Cancel call has occurred,
-   * and the command has otherwise exited with a successful status, Wait and
-   * similar methods will return ErrWaitDelay instead of nil.
-   * 
-   * If WaitDelay is zero (the default), I/O pipes will be read until EOF,
-   * which might not occur until orphaned subprocesses of the command have
-   * also closed their descriptors for the pipes.
-   */
-  waitDelay: time.Duration
- }
- interface Cmd {
-  /**
-   * String returns a human-readable description of c.
-   * It is intended only for debugging.
-   * In particular, it is not suitable for use as input to a shell.
-   * The output of String may vary across Go releases.
-   */
-  string(): string
- }
- interface Cmd {
-  /**
-   * Run starts the specified command and waits for it to complete.
-   * 
-   * The returned error is nil if the command runs, has no problems
-   * copying stdin, stdout, and stderr, and exits with a zero exit
-   * status.
-   * 
-   * If the command starts but does not complete successfully, the error is of
-   * type [*ExitError]. Other error types may be returned for other situations.
-   * 
-   * If the calling goroutine has locked the operating system thread
-   * with [runtime.LockOSThread] and modified any inheritable OS-level
-   * thread state (for example, Linux or Plan 9 name spaces), the new
-   * process will inherit the caller's thread state.
-   */
-  run(): void
- }
- interface Cmd {
-  /**
-   * Start starts the specified command but does not wait for it to complete.
-   * 
-   * If Start returns successfully, the c.Process field will be set.
-   * 
-   * After a successful call to Start the [Cmd.Wait] method must be called in
-   * order to release associated system resources.
-   */
-  start(): void
- }
- interface Cmd {
-  /**
-   * Wait waits for the command to exit and waits for any copying to
-   * stdin or copying from stdout or stderr to complete.
-   * 
-   * The command must have been started by [Cmd.Start].
-   * 
-   * The returned error is nil if the command runs, has no problems
-   * copying stdin, stdout, and stderr, and exits with a zero exit
-   * status.
-   * 
-   * If the command fails to run or doesn't complete successfully, the
-   * error is of type [*ExitError]. Other error types may be
-   * returned for I/O problems.
-   * 
-   * If any of c.Stdin, c.Stdout or c.Stderr are not an [*os.File], Wait also waits
-   * for the respective I/O loop copying to or from the process to complete.
-   * 
-   * Wait releases any resources associated with the [Cmd].
-   */
-  wait(): void
- }
- interface Cmd {
-  /**
-   * Output runs the command and returns its standard output.
-   * Any returned error will usually be of type [*ExitError].
-   * If c.Stderr was nil, Output populates [ExitError.Stderr].
-   */
-  output(): string|Array<number>
- }
- interface Cmd {
-  /**
-   * CombinedOutput runs the command and returns its combined standard
-   * output and standard error.
-   */
-  combinedOutput(): string|Array<number>
- }
- interface Cmd {
-  /**
-   * StdinPipe returns a pipe that will be connected to the command's
-   * standard input when the command starts.
-   * The pipe will be closed automatically after [Cmd.Wait] sees the command exit.
-   * A caller need only call Close to force the pipe to close sooner.
-   * For example, if the command being run will not exit until standard input
-   * is closed, the caller must close the pipe.
-   */
-  stdinPipe(): io.WriteCloser
- }
- interface Cmd {
-  /**
-   * StdoutPipe returns a pipe that will be connected to the command's
-   * standard output when the command starts.
-   * 
-   * [Cmd.Wait] will close the pipe after seeing the command exit, so most callers
-   * need not close the pipe themselves. It is thus incorrect to call Wait
-   * before all reads from the pipe have completed.
-   * For the same reason, it is incorrect to call [Cmd.Run] when using StdoutPipe.
-   * See the example for idiomatic usage.
-   */
-  stdoutPipe(): io.ReadCloser
- }
- interface Cmd {
-  /**
-   * StderrPipe returns a pipe that will be connected to the command's
-   * standard error when the command starts.
-   * 
-   * [Cmd.Wait] will close the pipe after seeing the command exit, so most callers
-   * need not close the pipe themselves. It is thus incorrect to call Wait
-   * before all reads from the pipe have completed.
-   * For the same reason, it is incorrect to use [Cmd.Run] when using StderrPipe.
-   * See the StdoutPipe example for idiomatic usage.
-   */
-  stderrPipe(): io.ReadCloser
- }
- interface Cmd {
-  /**
-   * Environ returns a copy of the environment in which the command would be run
-   * as it is currently configured.
-   */
-  environ(): Array<string>
- }
-}
-
-/**
- * Package jwt is a Go implementation of JSON Web Tokens: http://self-issued.info/docs/draft-jones-json-web-token.html
- * 
- * See README.md for more info.
- */
-namespace jwt {
- /**
-  * MapClaims is a claims type that uses the map[string]interface{} for JSON decoding.
-  * This is the default claims type if you don't supply one
-  */
- interface MapClaims extends _TygojaDict{}
- interface MapClaims {
-  /**
-   * VerifyAudience Compares the aud claim against cmp.
-   * If required is false, this method will return true if the value matches or is unset
-   */
-  verifyAudience(cmp: string, req: boolean): boolean
- }
- interface MapClaims {
-  /**
-   * VerifyExpiresAt compares the exp claim against cmp (cmp <= exp).
-   * If req is false, it will return true, if exp is unset.
-   */
-  verifyExpiresAt(cmp: number, req: boolean): boolean
- }
- interface MapClaims {
-  /**
-   * VerifyIssuedAt compares the exp claim against cmp (cmp >= iat).
-   * If req is false, it will return true, if iat is unset.
-   */
-  verifyIssuedAt(cmp: number, req: boolean): boolean
- }
- interface MapClaims {
-  /**
-   * VerifyNotBefore compares the nbf claim against cmp (cmp >= nbf).
-   * If req is false, it will return true, if nbf is unset.
-   */
-  verifyNotBefore(cmp: number, req: boolean): boolean
- }
- interface MapClaims {
-  /**
-   * VerifyIssuer compares the iss claim against cmp.
-   * If required is false, this method will return true if the value matches or is unset
-   */
-  verifyIssuer(cmp: string, req: boolean): boolean
- }
- interface MapClaims {
-  /**
-   * Valid validates time based claims "exp, iat, nbf".
-   * There is no accounting for clock skew.
-   * As well, if any of the above claims are not in the token, it will still
-   * be considered a valid claim.
-   */
-  valid(): void
- }
-}
-
-/**
- * Package types implements some commonly used db serializable types
- * like datetime, json, etc.
- */
-namespace types {
- /**
-  * JsonArray defines a slice that is safe for json and db read/write.
-  */
- interface JsonArray<T> extends Array<T>{}
- interface JsonArray<T> {
-  /**
-   * MarshalJSON implements the [json.Marshaler] interface.
-   */
-  marshalJSON(): string|Array<number>
- }
- interface JsonArray<T> {
-  /**
-   * Value implements the [driver.Valuer] interface.
-   */
-  value(): any
- }
- interface JsonArray<T> {
-  /**
-   * Scan implements [sql.Scanner] interface to scan the provided value
-   * into the current JsonArray[T] instance.
-   */
-  scan(value: any): void
- }
- /**
-  * JsonMap defines a map that is safe for json and db read/write.
-  */
- interface JsonMap extends _TygojaDict{}
- interface JsonMap {
-  /**
-   * MarshalJSON implements the [json.Marshaler] interface.
-   */
-  marshalJSON(): string|Array<number>
- }
- interface JsonMap {
-  /**
-   * Get retrieves a single value from the current JsonMap.
-   * 
-   * This helper was added primarily to assist the goja integration since custom map types
-   * don't have direct access to the map keys (https://pkg.go.dev/github.com/dop251/goja#hdr-Maps_with_methods).
-   */
-  get(key: string): any
- }
- interface JsonMap {
-  /**
-   * Set sets a single value in the current JsonMap.
-   * 
-   * This helper was added primarily to assist the goja integration since custom map types
-   * don't have direct access to the map keys (https://pkg.go.dev/github.com/dop251/goja#hdr-Maps_with_methods).
-   */
-  set(key: string, value: any): void
- }
- interface JsonMap {
-  /**
-   * Value implements the [driver.Valuer] interface.
-   */
-  value(): any
- }
- interface JsonMap {
-  /**
-   * Scan implements [sql.Scanner] interface to scan the provided value
-   * into the current `JsonMap` instance.
-   */
-  scan(value: any): void
- }
-}
-
-/**
  * Package multipart implements MIME multipart parsing, as defined in RFC
  * 2046.
  * 
@@ -8752,8 +8170,8 @@ namespace types {
  * To protect against malicious inputs, this package sets limits on the size
  * of the MIME data it processes.
  * 
- * [Reader.NextPart] and [Reader.NextRawPart] limit the number of headers in a
- * part to 10000 and [Reader.ReadForm] limits the total number of headers in all
+ * Reader.NextPart and Reader.NextRawPart limit the number of headers in a
+ * part to 10000 and Reader.ReadForm limits the total number of headers in all
  * FileHeaders to 10000.
  * These limits may be adjusted with the GODEBUG=multipartmaxheaders=<values>
  * setting.
@@ -8761,6 +8179,11 @@ namespace types {
  * Reader.ReadForm further limits the number of parts in a form to 1000.
  * This limit may be adjusted with the GODEBUG=multipartmaxparts=<value>
  * setting.
+ */
+/**
+ * Copyright 2023 The Go Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
  */
 namespace multipart {
  /**
@@ -8773,7 +8196,7 @@ namespace multipart {
  }
  interface FileHeader {
   /**
-   * Open opens and returns the [FileHeader]'s associated File.
+   * Open opens and returns the FileHeader's associated File.
    */
   open(): File
  }
@@ -9146,11 +8569,6 @@ namespace http {
    * redirects.
    */
   response?: Response
-  /**
-   * Pattern is the [ServeMux] pattern that matched the request.
-   * It is empty if the request was not matched against a pattern.
-   */
-  pattern: string
  }
  interface Request {
   /**
@@ -9187,8 +8605,6 @@ namespace http {
    * Clone returns a deep copy of r with its context changed to ctx.
    * The provided ctx must be non-nil.
    * 
-   * Clone only makes a shallow copy of the Body field.
-   * 
    * For an outgoing client request, the context controls the entire
    * lifetime of a request and its response: obtaining a connection,
    * sending the request, and reading the response headers and body.
@@ -9213,13 +8629,6 @@ namespace http {
    * Cookies parses and returns the HTTP cookies sent with the request.
    */
   cookies(): Array<(Cookie | undefined)>
- }
- interface Request {
-  /**
-   * CookiesNamed parses and returns the named HTTP cookies sent with the request
-   * or an empty slice if none matched.
-   */
-  cookiesNamed(name: string): Array<(Cookie | undefined)>
  }
  interface Request {
   /**
@@ -9524,9 +8933,9 @@ namespace http {
    * ReadHeaderTimeout is the amount of time allowed to read
    * request headers. The connection's read deadline is reset
    * after reading the headers and the Handler can decide what
-   * is considered too slow for the body. If zero, the value of
-   * ReadTimeout is used. If negative, or if zero and ReadTimeout
-   * is zero or negative, there is no timeout.
+   * is considered too slow for the body. If ReadHeaderTimeout
+   * is zero, the value of ReadTimeout is used. If both are
+   * zero, there is no timeout.
    */
   readHeaderTimeout: time.Duration
   /**
@@ -9539,9 +8948,9 @@ namespace http {
   writeTimeout: time.Duration
   /**
    * IdleTimeout is the maximum amount of time to wait for the
-   * next request when keep-alives are enabled. If zero, the value
-   * of ReadTimeout is used. If negative, or if zero and ReadTimeout
-   * is zero or negative, there is no timeout.
+   * next request when keep-alives are enabled. If IdleTimeout
+   * is zero, the value of ReadTimeout is used. If both are
+   * zero, there is no timeout.
    */
   idleTimeout: time.Duration
   /**
@@ -9679,8 +9088,7 @@ namespace http {
    * 
    * Files containing a certificate and matching private key for the
    * server must be provided if neither the [Server]'s
-   * TLSConfig.Certificates, TLSConfig.GetCertificate nor
-   * config.GetConfigForClient are populated.
+   * TLSConfig.Certificates nor TLSConfig.GetCertificate are populated.
    * If the certificate is signed by a certificate authority, the
    * certFile should be the concatenation of the server's certificate,
    * any intermediates, and the CA's certificate.
@@ -9718,6 +9126,365 @@ namespace http {
    * [Server.Close], the returned error is [ErrServerClosed].
    */
   listenAndServeTLS(certFile: string, keyFile: string): void
+ }
+}
+
+/**
+ * Package blob provides an easy and portable way to interact with blobs
+ * within a storage location. Subpackages contain driver implementations of
+ * blob for supported services.
+ * 
+ * See https://gocloud.dev/howto/blob/ for a detailed how-to guide.
+ * 
+ * *blob.Bucket implements io/fs.FS and io/fs.SubFS, so it can be used with
+ * functions in that package.
+ * 
+ * # Errors
+ * 
+ * The errors returned from this package can be inspected in several ways:
+ * 
+ * The Code function from gocloud.dev/gcerrors will return an error code, also
+ * defined in that package, when invoked on an error.
+ * 
+ * The Bucket.ErrorAs method can retrieve the driver error underlying the returned
+ * error.
+ * 
+ * # OpenCensus Integration
+ * 
+ * OpenCensus supports tracing and metric collection for multiple languages and
+ * backend providers. See https://opencensus.io.
+ * 
+ * This API collects OpenCensus traces and metrics for the following methods:
+ * ```
+ *   - Attributes
+ *   - Copy
+ *   - Delete
+ *   - ListPage
+ *   - NewRangeReader, from creation until the call to Close. (NewReader and ReadAll
+ *     are included because they call NewRangeReader.)
+ *   - NewWriter, from creation until the call to Close.
+ * ```
+ * 
+ * All trace and metric names begin with the package import path.
+ * The traces add the method name.
+ * For example, "gocloud.dev/blob/Attributes".
+ * The metrics are "completed_calls", a count of completed method calls by driver,
+ * method and status (error code); and "latency", a distribution of method latency
+ * by driver and method.
+ * For example, "gocloud.dev/blob/latency".
+ * 
+ * It also collects the following metrics:
+ * ```
+ *   - gocloud.dev/blob/bytes_read: the total number of bytes read, by driver.
+ *   - gocloud.dev/blob/bytes_written: the total number of bytes written, by driver.
+ * ```
+ * 
+ * To enable trace collection in your application, see "Configure Exporter" at
+ * https://opencensus.io/quickstart/go/tracing.
+ * To enable metric collection in your application, see "Exporting stats" at
+ * https://opencensus.io/quickstart/go/metrics.
+ */
+namespace blob {
+ /**
+  * Reader reads bytes from a blob.
+  * It implements io.ReadSeekCloser, and must be closed after
+  * reads are finished.
+  */
+ interface Reader {
+ }
+ interface Reader {
+  /**
+   * Read implements io.Reader (https://golang.org/pkg/io/#Reader).
+   */
+  read(p: string|Array<number>): number
+ }
+ interface Reader {
+  /**
+   * Seek implements io.Seeker (https://golang.org/pkg/io/#Seeker).
+   */
+  seek(offset: number, whence: number): number
+ }
+ interface Reader {
+  /**
+   * Close implements io.Closer (https://golang.org/pkg/io/#Closer).
+   */
+  close(): void
+ }
+ interface Reader {
+  /**
+   * ContentType returns the MIME type of the blob.
+   */
+  contentType(): string
+ }
+ interface Reader {
+  /**
+   * ModTime returns the time the blob was last modified.
+   */
+  modTime(): time.Time
+ }
+ interface Reader {
+  /**
+   * Size returns the size of the blob content in bytes.
+   */
+  size(): number
+ }
+ interface Reader {
+  /**
+   * As converts i to driver-specific types.
+   * See https://gocloud.dev/concepts/as/ for background information, the "As"
+   * examples in this package for examples, and the driver package
+   * documentation for the specific types supported for that driver.
+   */
+  as(i: {
+   }): boolean
+ }
+ interface Reader {
+  /**
+   * WriteTo reads from r and writes to w until there's no more data or
+   * an error occurs.
+   * The return value is the number of bytes written to w.
+   * 
+   * It implements the io.WriterTo interface.
+   */
+  writeTo(w: io.Writer): number
+ }
+ /**
+  * Attributes contains attributes about a blob.
+  */
+ interface Attributes {
+  /**
+   * CacheControl specifies caching attributes that services may use
+   * when serving the blob.
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+   */
+  cacheControl: string
+  /**
+   * ContentDisposition specifies whether the blob content is expected to be
+   * displayed inline or as an attachment.
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+   */
+  contentDisposition: string
+  /**
+   * ContentEncoding specifies the encoding used for the blob's content, if any.
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
+   */
+  contentEncoding: string
+  /**
+   * ContentLanguage specifies the language used in the blob's content, if any.
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language
+   */
+  contentLanguage: string
+  /**
+   * ContentType is the MIME type of the blob. It will not be empty.
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
+   */
+  contentType: string
+  /**
+   * Metadata holds key/value pairs associated with the blob.
+   * Keys are guaranteed to be in lowercase, even if the backend service
+   * has case-sensitive keys (although note that Metadata written via
+   * this package will always be lowercased). If there are duplicate
+   * case-insensitive keys (e.g., "foo" and "FOO"), only one value
+   * will be kept, and it is undefined which one.
+   */
+  metadata: _TygojaDict
+  /**
+   * CreateTime is the time the blob was created, if available. If not available,
+   * CreateTime will be the zero time.
+   */
+  createTime: time.Time
+  /**
+   * ModTime is the time the blob was last modified.
+   */
+  modTime: time.Time
+  /**
+   * Size is the size of the blob's content in bytes.
+   */
+  size: number
+  /**
+   * MD5 is an MD5 hash of the blob contents or nil if not available.
+   */
+  md5: string|Array<number>
+  /**
+   * ETag for the blob; see https://en.wikipedia.org/wiki/HTTP_ETag.
+   */
+  eTag: string
+ }
+ interface Attributes {
+  /**
+   * As converts i to driver-specific types.
+   * See https://gocloud.dev/concepts/as/ for background information, the "As"
+   * examples in this package for examples, and the driver package
+   * documentation for the specific types supported for that driver.
+   */
+  as(i: {
+   }): boolean
+ }
+ /**
+  * ListObject represents a single blob returned from List.
+  */
+ interface ListObject {
+  /**
+   * Key is the key for this blob.
+   */
+  key: string
+  /**
+   * ModTime is the time the blob was last modified.
+   */
+  modTime: time.Time
+  /**
+   * Size is the size of the blob's content in bytes.
+   */
+  size: number
+  /**
+   * MD5 is an MD5 hash of the blob contents or nil if not available.
+   */
+  md5: string|Array<number>
+  /**
+   * IsDir indicates that this result represents a "directory" in the
+   * hierarchical namespace, ending in ListOptions.Delimiter. Key can be
+   * passed as ListOptions.Prefix to list items in the "directory".
+   * Fields other than Key and IsDir will not be set if IsDir is true.
+   */
+  isDir: boolean
+ }
+ interface ListObject {
+  /**
+   * As converts i to driver-specific types.
+   * See https://gocloud.dev/concepts/as/ for background information, the "As"
+   * examples in this package for examples, and the driver package
+   * documentation for the specific types supported for that driver.
+   */
+  as(i: {
+   }): boolean
+ }
+}
+
+/**
+ * Package types implements some commonly used db serializable types
+ * like datetime, json, etc.
+ */
+namespace types {
+ /**
+  * JsonArray defines a slice that is safe for json and db read/write.
+  */
+ interface JsonArray<T> extends Array<T>{}
+ interface JsonArray<T> {
+  /**
+   * MarshalJSON implements the [json.Marshaler] interface.
+   */
+  marshalJSON(): string|Array<number>
+ }
+ interface JsonArray<T> {
+  /**
+   * Value implements the [driver.Valuer] interface.
+   */
+  value(): any
+ }
+ interface JsonArray<T> {
+  /**
+   * Scan implements [sql.Scanner] interface to scan the provided value
+   * into the current JsonArray[T] instance.
+   */
+  scan(value: any): void
+ }
+ /**
+  * JsonMap defines a map that is safe for json and db read/write.
+  */
+ interface JsonMap extends _TygojaDict{}
+ interface JsonMap {
+  /**
+   * MarshalJSON implements the [json.Marshaler] interface.
+   */
+  marshalJSON(): string|Array<number>
+ }
+ interface JsonMap {
+  /**
+   * Get retrieves a single value from the current JsonMap.
+   * 
+   * This helper was added primarily to assist the goja integration since custom map types
+   * don't have direct access to the map keys (https://pkg.go.dev/github.com/dop251/goja#hdr-Maps_with_methods).
+   */
+  get(key: string): any
+ }
+ interface JsonMap {
+  /**
+   * Set sets a single value in the current JsonMap.
+   * 
+   * This helper was added primarily to assist the goja integration since custom map types
+   * don't have direct access to the map keys (https://pkg.go.dev/github.com/dop251/goja#hdr-Maps_with_methods).
+   */
+  set(key: string, value: any): void
+ }
+ interface JsonMap {
+  /**
+   * Value implements the [driver.Valuer] interface.
+   */
+  value(): any
+ }
+ interface JsonMap {
+  /**
+   * Scan implements [sql.Scanner] interface to scan the provided value
+   * into the current `JsonMap` instance.
+   */
+  scan(value: any): void
+ }
+}
+
+/**
+ * Package jwt is a Go implementation of JSON Web Tokens: http://self-issued.info/docs/draft-jones-json-web-token.html
+ * 
+ * See README.md for more info.
+ */
+namespace jwt {
+ /**
+  * MapClaims is a claims type that uses the map[string]interface{} for JSON decoding.
+  * This is the default claims type if you don't supply one
+  */
+ interface MapClaims extends _TygojaDict{}
+ interface MapClaims {
+  /**
+   * VerifyAudience Compares the aud claim against cmp.
+   * If required is false, this method will return true if the value matches or is unset
+   */
+  verifyAudience(cmp: string, req: boolean): boolean
+ }
+ interface MapClaims {
+  /**
+   * VerifyExpiresAt compares the exp claim against cmp (cmp <= exp).
+   * If req is false, it will return true, if exp is unset.
+   */
+  verifyExpiresAt(cmp: number, req: boolean): boolean
+ }
+ interface MapClaims {
+  /**
+   * VerifyIssuedAt compares the exp claim against cmp (cmp >= iat).
+   * If req is false, it will return true, if iat is unset.
+   */
+  verifyIssuedAt(cmp: number, req: boolean): boolean
+ }
+ interface MapClaims {
+  /**
+   * VerifyNotBefore compares the nbf claim against cmp (cmp >= nbf).
+   * If req is false, it will return true, if nbf is unset.
+   */
+  verifyNotBefore(cmp: number, req: boolean): boolean
+ }
+ interface MapClaims {
+  /**
+   * VerifyIssuer compares the iss claim against cmp.
+   * If required is false, this method will return true if the value matches or is unset
+   */
+  verifyIssuer(cmp: string, req: boolean): boolean
+ }
+ interface MapClaims {
+  /**
+   * Valid validates time based claims "exp, iat, nbf".
+   * There is no accounting for clock skew.
+   * As well, if any of the above claims are not in the token, it will still
+   * be considered a valid claim.
+   */
+  valid(): void
  }
 }
 
@@ -9846,6 +9613,380 @@ namespace auth {
    * marshalizes the user api response into a standardized AuthUser struct.
    */
   fetchAuthUser(token: oauth2.Token): (AuthUser)
+ }
+}
+
+/**
+ * Package exec runs external commands. It wraps os.StartProcess to make it
+ * easier to remap stdin and stdout, connect I/O with pipes, and do other
+ * adjustments.
+ * 
+ * Unlike the "system" library call from C and other languages, the
+ * os/exec package intentionally does not invoke the system shell and
+ * does not expand any glob patterns or handle other expansions,
+ * pipelines, or redirections typically done by shells. The package
+ * behaves more like C's "exec" family of functions. To expand glob
+ * patterns, either call the shell directly, taking care to escape any
+ * dangerous input, or use the path/filepath package's Glob function.
+ * To expand environment variables, use package os's ExpandEnv.
+ * 
+ * Note that the examples in this package assume a Unix system.
+ * They may not run on Windows, and they do not run in the Go Playground
+ * used by golang.org and godoc.org.
+ * 
+ * # Executables in the current directory
+ * 
+ * The functions Command and LookPath look for a program
+ * in the directories listed in the current path, following the
+ * conventions of the host operating system.
+ * Operating systems have for decades included the current
+ * directory in this search, sometimes implicitly and sometimes
+ * configured explicitly that way by default.
+ * Modern practice is that including the current directory
+ * is usually unexpected and often leads to security problems.
+ * 
+ * To avoid those security problems, as of Go 1.19, this package will not resolve a program
+ * using an implicit or explicit path entry relative to the current directory.
+ * That is, if you run exec.LookPath("go"), it will not successfully return
+ * ./go on Unix nor .\go.exe on Windows, no matter how the path is configured.
+ * Instead, if the usual path algorithms would result in that answer,
+ * these functions return an error err satisfying errors.Is(err, ErrDot).
+ * 
+ * For example, consider these two program snippets:
+ * 
+ * ```
+ * 	path, err := exec.LookPath("prog")
+ * 	if err != nil {
+ * 		log.Fatal(err)
+ * 	}
+ * 	use(path)
+ * ```
+ * 
+ * and
+ * 
+ * ```
+ * 	cmd := exec.Command("prog")
+ * 	if err := cmd.Run(); err != nil {
+ * 		log.Fatal(err)
+ * 	}
+ * ```
+ * 
+ * These will not find and run ./prog or .\prog.exe,
+ * no matter how the current path is configured.
+ * 
+ * Code that always wants to run a program from the current directory
+ * can be rewritten to say "./prog" instead of "prog".
+ * 
+ * Code that insists on including results from relative path entries
+ * can instead override the error using an errors.Is check:
+ * 
+ * ```
+ * 	path, err := exec.LookPath("prog")
+ * 	if errors.Is(err, exec.ErrDot) {
+ * 		err = nil
+ * 	}
+ * 	if err != nil {
+ * 		log.Fatal(err)
+ * 	}
+ * 	use(path)
+ * ```
+ * 
+ * and
+ * 
+ * ```
+ * 	cmd := exec.Command("prog")
+ * 	if errors.Is(cmd.Err, exec.ErrDot) {
+ * 		cmd.Err = nil
+ * 	}
+ * 	if err := cmd.Run(); err != nil {
+ * 		log.Fatal(err)
+ * 	}
+ * ```
+ * 
+ * Setting the environment variable GODEBUG=execerrdot=0
+ * disables generation of ErrDot entirely, temporarily restoring the pre-Go 1.19
+ * behavior for programs that are unable to apply more targeted fixes.
+ * A future version of Go may remove support for this variable.
+ * 
+ * Before adding such overrides, make sure you understand the
+ * security implications of doing so.
+ * See https://go.dev/blog/path-security for more information.
+ */
+namespace exec {
+ /**
+  * Cmd represents an external command being prepared or run.
+  * 
+  * A Cmd cannot be reused after calling its Run, Output or CombinedOutput
+  * methods.
+  */
+ interface Cmd {
+  /**
+   * Path is the path of the command to run.
+   * 
+   * This is the only field that must be set to a non-zero
+   * value. If Path is relative, it is evaluated relative
+   * to Dir.
+   */
+  path: string
+  /**
+   * Args holds command line arguments, including the command as Args[0].
+   * If the Args field is empty or nil, Run uses {Path}.
+   * 
+   * In typical use, both Path and Args are set by calling Command.
+   */
+  args: Array<string>
+  /**
+   * Env specifies the environment of the process.
+   * Each entry is of the form "key=value".
+   * If Env is nil, the new process uses the current process's
+   * environment.
+   * If Env contains duplicate environment keys, only the last
+   * value in the slice for each duplicate key is used.
+   * As a special case on Windows, SYSTEMROOT is always added if
+   * missing and not explicitly set to the empty string.
+   */
+  env: Array<string>
+  /**
+   * Dir specifies the working directory of the command.
+   * If Dir is the empty string, Run runs the command in the
+   * calling process's current directory.
+   */
+  dir: string
+  /**
+   * Stdin specifies the process's standard input.
+   * 
+   * If Stdin is nil, the process reads from the null device (os.DevNull).
+   * 
+   * If Stdin is an *os.File, the process's standard input is connected
+   * directly to that file.
+   * 
+   * Otherwise, during the execution of the command a separate
+   * goroutine reads from Stdin and delivers that data to the command
+   * over a pipe. In this case, Wait does not complete until the goroutine
+   * stops copying, either because it has reached the end of Stdin
+   * (EOF or a read error), or because writing to the pipe returned an error,
+   * or because a nonzero WaitDelay was set and expired.
+   */
+  stdin: io.Reader
+  /**
+   * Stdout and Stderr specify the process's standard output and error.
+   * 
+   * If either is nil, Run connects the corresponding file descriptor
+   * to the null device (os.DevNull).
+   * 
+   * If either is an *os.File, the corresponding output from the process
+   * is connected directly to that file.
+   * 
+   * Otherwise, during the execution of the command a separate goroutine
+   * reads from the process over a pipe and delivers that data to the
+   * corresponding Writer. In this case, Wait does not complete until the
+   * goroutine reaches EOF or encounters an error or a nonzero WaitDelay
+   * expires.
+   * 
+   * If Stdout and Stderr are the same writer, and have a type that can
+   * be compared with ==, at most one goroutine at a time will call Write.
+   */
+  stdout: io.Writer
+  stderr: io.Writer
+  /**
+   * ExtraFiles specifies additional open files to be inherited by the
+   * new process. It does not include standard input, standard output, or
+   * standard error. If non-nil, entry i becomes file descriptor 3+i.
+   * 
+   * ExtraFiles is not supported on Windows.
+   */
+  extraFiles: Array<(os.File | undefined)>
+  /**
+   * SysProcAttr holds optional, operating system-specific attributes.
+   * Run passes it to os.StartProcess as the os.ProcAttr's Sys field.
+   */
+  sysProcAttr?: syscall.SysProcAttr
+  /**
+   * Process is the underlying process, once started.
+   */
+  process?: os.Process
+  /**
+   * ProcessState contains information about an exited process.
+   * If the process was started successfully, Wait or Run will
+   * populate its ProcessState when the command completes.
+   */
+  processState?: os.ProcessState
+  err: Error // LookPath error, if any.
+  /**
+   * If Cancel is non-nil, the command must have been created with
+   * CommandContext and Cancel will be called when the command's
+   * Context is done. By default, CommandContext sets Cancel to
+   * call the Kill method on the command's Process.
+   * 
+   * Typically a custom Cancel will send a signal to the command's
+   * Process, but it may instead take other actions to initiate cancellation,
+   * such as closing a stdin or stdout pipe or sending a shutdown request on a
+   * network socket.
+   * 
+   * If the command exits with a success status after Cancel is
+   * called, and Cancel does not return an error equivalent to
+   * os.ErrProcessDone, then Wait and similar methods will return a non-nil
+   * error: either an error wrapping the one returned by Cancel,
+   * or the error from the Context.
+   * (If the command exits with a non-success status, or Cancel
+   * returns an error that wraps os.ErrProcessDone, Wait and similar methods
+   * continue to return the command's usual exit status.)
+   * 
+   * If Cancel is set to nil, nothing will happen immediately when the command's
+   * Context is done, but a nonzero WaitDelay will still take effect. That may
+   * be useful, for example, to work around deadlocks in commands that do not
+   * support shutdown signals but are expected to always finish quickly.
+   * 
+   * Cancel will not be called if Start returns a non-nil error.
+   */
+  cancel: () => void
+  /**
+   * If WaitDelay is non-zero, it bounds the time spent waiting on two sources
+   * of unexpected delay in Wait: a child process that fails to exit after the
+   * associated Context is canceled, and a child process that exits but leaves
+   * its I/O pipes unclosed.
+   * 
+   * The WaitDelay timer starts when either the associated Context is done or a
+   * call to Wait observes that the child process has exited, whichever occurs
+   * first. When the delay has elapsed, the command shuts down the child process
+   * and/or its I/O pipes.
+   * 
+   * If the child process has failed to exit — perhaps because it ignored or
+   * failed to receive a shutdown signal from a Cancel function, or because no
+   * Cancel function was set — then it will be terminated using os.Process.Kill.
+   * 
+   * Then, if the I/O pipes communicating with the child process are still open,
+   * those pipes are closed in order to unblock any goroutines currently blocked
+   * on Read or Write calls.
+   * 
+   * If pipes are closed due to WaitDelay, no Cancel call has occurred,
+   * and the command has otherwise exited with a successful status, Wait and
+   * similar methods will return ErrWaitDelay instead of nil.
+   * 
+   * If WaitDelay is zero (the default), I/O pipes will be read until EOF,
+   * which might not occur until orphaned subprocesses of the command have
+   * also closed their descriptors for the pipes.
+   */
+  waitDelay: time.Duration
+ }
+ interface Cmd {
+  /**
+   * String returns a human-readable description of c.
+   * It is intended only for debugging.
+   * In particular, it is not suitable for use as input to a shell.
+   * The output of String may vary across Go releases.
+   */
+  string(): string
+ }
+ interface Cmd {
+  /**
+   * Run starts the specified command and waits for it to complete.
+   * 
+   * The returned error is nil if the command runs, has no problems
+   * copying stdin, stdout, and stderr, and exits with a zero exit
+   * status.
+   * 
+   * If the command starts but does not complete successfully, the error is of
+   * type *ExitError. Other error types may be returned for other situations.
+   * 
+   * If the calling goroutine has locked the operating system thread
+   * with runtime.LockOSThread and modified any inheritable OS-level
+   * thread state (for example, Linux or Plan 9 name spaces), the new
+   * process will inherit the caller's thread state.
+   */
+  run(): void
+ }
+ interface Cmd {
+  /**
+   * Start starts the specified command but does not wait for it to complete.
+   * 
+   * If Start returns successfully, the c.Process field will be set.
+   * 
+   * After a successful call to Start the Wait method must be called in
+   * order to release associated system resources.
+   */
+  start(): void
+ }
+ interface Cmd {
+  /**
+   * Wait waits for the command to exit and waits for any copying to
+   * stdin or copying from stdout or stderr to complete.
+   * 
+   * The command must have been started by Start.
+   * 
+   * The returned error is nil if the command runs, has no problems
+   * copying stdin, stdout, and stderr, and exits with a zero exit
+   * status.
+   * 
+   * If the command fails to run or doesn't complete successfully, the
+   * error is of type *ExitError. Other error types may be
+   * returned for I/O problems.
+   * 
+   * If any of c.Stdin, c.Stdout or c.Stderr are not an *os.File, Wait also waits
+   * for the respective I/O loop copying to or from the process to complete.
+   * 
+   * Wait releases any resources associated with the Cmd.
+   */
+  wait(): void
+ }
+ interface Cmd {
+  /**
+   * Output runs the command and returns its standard output.
+   * Any returned error will usually be of type *ExitError.
+   * If c.Stderr was nil, Output populates ExitError.Stderr.
+   */
+  output(): string|Array<number>
+ }
+ interface Cmd {
+  /**
+   * CombinedOutput runs the command and returns its combined standard
+   * output and standard error.
+   */
+  combinedOutput(): string|Array<number>
+ }
+ interface Cmd {
+  /**
+   * StdinPipe returns a pipe that will be connected to the command's
+   * standard input when the command starts.
+   * The pipe will be closed automatically after Wait sees the command exit.
+   * A caller need only call Close to force the pipe to close sooner.
+   * For example, if the command being run will not exit until standard input
+   * is closed, the caller must close the pipe.
+   */
+  stdinPipe(): io.WriteCloser
+ }
+ interface Cmd {
+  /**
+   * StdoutPipe returns a pipe that will be connected to the command's
+   * standard output when the command starts.
+   * 
+   * Wait will close the pipe after seeing the command exit, so most callers
+   * need not close the pipe themselves. It is thus incorrect to call Wait
+   * before all reads from the pipe have completed.
+   * For the same reason, it is incorrect to call Run when using StdoutPipe.
+   * See the example for idiomatic usage.
+   */
+  stdoutPipe(): io.ReadCloser
+ }
+ interface Cmd {
+  /**
+   * StderrPipe returns a pipe that will be connected to the command's
+   * standard error when the command starts.
+   * 
+   * Wait will close the pipe after seeing the command exit, so most callers
+   * need not close the pipe themselves. It is thus incorrect to call Wait
+   * before all reads from the pipe have completed.
+   * For the same reason, it is incorrect to use Run when using StderrPipe.
+   * See the StdoutPipe example for idiomatic usage.
+   */
+  stderrPipe(): io.ReadCloser
+ }
+ interface Cmd {
+  /**
+   * Environ returns a copy of the environment in which the command would be run
+   * as it is currently configured.
+   */
+  environ(): Array<string>
  }
 }
 
@@ -10422,237 +10563,6 @@ namespace echo {
    * ```
    */
   start(address: string): void
- }
-}
-
-/**
- * Package blob provides an easy and portable way to interact with blobs
- * within a storage location. Subpackages contain driver implementations of
- * blob for supported services.
- * 
- * See https://gocloud.dev/howto/blob/ for a detailed how-to guide.
- * 
- * *blob.Bucket implements io/fs.FS and io/fs.SubFS, so it can be used with
- * functions in that package.
- * 
- * # Errors
- * 
- * The errors returned from this package can be inspected in several ways:
- * 
- * The Code function from gocloud.dev/gcerrors will return an error code, also
- * defined in that package, when invoked on an error.
- * 
- * The Bucket.ErrorAs method can retrieve the driver error underlying the returned
- * error.
- * 
- * # OpenCensus Integration
- * 
- * OpenCensus supports tracing and metric collection for multiple languages and
- * backend providers. See https://opencensus.io.
- * 
- * This API collects OpenCensus traces and metrics for the following methods:
- * ```
- *   - Attributes
- *   - Copy
- *   - Delete
- *   - ListPage
- *   - NewRangeReader, from creation until the call to Close. (NewReader and ReadAll
- *     are included because they call NewRangeReader.)
- *   - NewWriter, from creation until the call to Close.
- * ```
- * 
- * All trace and metric names begin with the package import path.
- * The traces add the method name.
- * For example, "gocloud.dev/blob/Attributes".
- * The metrics are "completed_calls", a count of completed method calls by driver,
- * method and status (error code); and "latency", a distribution of method latency
- * by driver and method.
- * For example, "gocloud.dev/blob/latency".
- * 
- * It also collects the following metrics:
- * ```
- *   - gocloud.dev/blob/bytes_read: the total number of bytes read, by driver.
- *   - gocloud.dev/blob/bytes_written: the total number of bytes written, by driver.
- * ```
- * 
- * To enable trace collection in your application, see "Configure Exporter" at
- * https://opencensus.io/quickstart/go/tracing.
- * To enable metric collection in your application, see "Exporting stats" at
- * https://opencensus.io/quickstart/go/metrics.
- */
-namespace blob {
- /**
-  * Reader reads bytes from a blob.
-  * It implements io.ReadSeekCloser, and must be closed after
-  * reads are finished.
-  */
- interface Reader {
- }
- interface Reader {
-  /**
-   * Read implements io.Reader (https://golang.org/pkg/io/#Reader).
-   */
-  read(p: string|Array<number>): number
- }
- interface Reader {
-  /**
-   * Seek implements io.Seeker (https://golang.org/pkg/io/#Seeker).
-   */
-  seek(offset: number, whence: number): number
- }
- interface Reader {
-  /**
-   * Close implements io.Closer (https://golang.org/pkg/io/#Closer).
-   */
-  close(): void
- }
- interface Reader {
-  /**
-   * ContentType returns the MIME type of the blob.
-   */
-  contentType(): string
- }
- interface Reader {
-  /**
-   * ModTime returns the time the blob was last modified.
-   */
-  modTime(): time.Time
- }
- interface Reader {
-  /**
-   * Size returns the size of the blob content in bytes.
-   */
-  size(): number
- }
- interface Reader {
-  /**
-   * As converts i to driver-specific types.
-   * See https://gocloud.dev/concepts/as/ for background information, the "As"
-   * examples in this package for examples, and the driver package
-   * documentation for the specific types supported for that driver.
-   */
-  as(i: {
-   }): boolean
- }
- interface Reader {
-  /**
-   * WriteTo reads from r and writes to w until there's no more data or
-   * an error occurs.
-   * The return value is the number of bytes written to w.
-   * 
-   * It implements the io.WriterTo interface.
-   */
-  writeTo(w: io.Writer): number
- }
- /**
-  * Attributes contains attributes about a blob.
-  */
- interface Attributes {
-  /**
-   * CacheControl specifies caching attributes that services may use
-   * when serving the blob.
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
-   */
-  cacheControl: string
-  /**
-   * ContentDisposition specifies whether the blob content is expected to be
-   * displayed inline or as an attachment.
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
-   */
-  contentDisposition: string
-  /**
-   * ContentEncoding specifies the encoding used for the blob's content, if any.
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
-   */
-  contentEncoding: string
-  /**
-   * ContentLanguage specifies the language used in the blob's content, if any.
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language
-   */
-  contentLanguage: string
-  /**
-   * ContentType is the MIME type of the blob. It will not be empty.
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
-   */
-  contentType: string
-  /**
-   * Metadata holds key/value pairs associated with the blob.
-   * Keys are guaranteed to be in lowercase, even if the backend service
-   * has case-sensitive keys (although note that Metadata written via
-   * this package will always be lowercased). If there are duplicate
-   * case-insensitive keys (e.g., "foo" and "FOO"), only one value
-   * will be kept, and it is undefined which one.
-   */
-  metadata: _TygojaDict
-  /**
-   * CreateTime is the time the blob was created, if available. If not available,
-   * CreateTime will be the zero time.
-   */
-  createTime: time.Time
-  /**
-   * ModTime is the time the blob was last modified.
-   */
-  modTime: time.Time
-  /**
-   * Size is the size of the blob's content in bytes.
-   */
-  size: number
-  /**
-   * MD5 is an MD5 hash of the blob contents or nil if not available.
-   */
-  md5: string|Array<number>
-  /**
-   * ETag for the blob; see https://en.wikipedia.org/wiki/HTTP_ETag.
-   */
-  eTag: string
- }
- interface Attributes {
-  /**
-   * As converts i to driver-specific types.
-   * See https://gocloud.dev/concepts/as/ for background information, the "As"
-   * examples in this package for examples, and the driver package
-   * documentation for the specific types supported for that driver.
-   */
-  as(i: {
-   }): boolean
- }
- /**
-  * ListObject represents a single blob returned from List.
-  */
- interface ListObject {
-  /**
-   * Key is the key for this blob.
-   */
-  key: string
-  /**
-   * ModTime is the time the blob was last modified.
-   */
-  modTime: time.Time
-  /**
-   * Size is the size of the blob's content in bytes.
-   */
-  size: number
-  /**
-   * MD5 is an MD5 hash of the blob contents or nil if not available.
-   */
-  md5: string|Array<number>
-  /**
-   * IsDir indicates that this result represents a "directory" in the
-   * hierarchical namespace, ending in ListOptions.Delimiter. Key can be
-   * passed as ListOptions.Prefix to list items in the "directory".
-   * Fields other than Key and IsDir will not be set if IsDir is true.
-   */
-  isDir: boolean
- }
- interface ListObject {
-  /**
-   * As converts i to driver-specific types.
-   * See https://gocloud.dev/concepts/as/ for background information, the "As"
-   * examples in this package for examples, and the driver package
-   * documentation for the specific types supported for that driver.
-   */
-  as(i: {
-   }): boolean
  }
 }
 
@@ -11493,8 +11403,8 @@ namespace schema {
  * Package models implements all PocketBase DB models and DTOs.
  */
 namespace models {
- type _subtoHHr = BaseModel
- interface Admin extends _subtoHHr {
+ type _subJrqqW = BaseModel
+ interface Admin extends _subJrqqW {
   avatar: number
   email: string
   tokenKey: string
@@ -11529,8 +11439,8 @@ namespace models {
  }
  // @ts-ignore
  import validation = ozzo_validation
- type _subeuljo = BaseModel
- interface Collection extends _subeuljo {
+ type _subJJXsY = BaseModel
+ interface Collection extends _subJJXsY {
   name: string
   type: string
   system: boolean
@@ -11623,8 +11533,8 @@ namespace models {
    */
   setOptions(typedOptions: any): void
  }
- type _subtGzgn = BaseModel
- interface ExternalAuth extends _subtGzgn {
+ type _subUvhkT = BaseModel
+ interface ExternalAuth extends _subUvhkT {
   collectionId: string
   recordId: string
   provider: string
@@ -11633,8 +11543,8 @@ namespace models {
  interface ExternalAuth {
   tableName(): string
  }
- type _subsrBRs = BaseModel
- interface Record extends _subsrBRs {
+ type _subNUahA = BaseModel
+ interface Record extends _subNUahA {
  }
  interface Record {
   /**
@@ -14673,28 +14583,74 @@ namespace core {
  }
 }
 
-/**
- * Package io provides basic interfaces to I/O primitives.
- * Its primary job is to wrap existing implementations of such primitives,
- * such as those in package os, into shared public interfaces that
- * abstract the functionality, plus some other related primitives.
- * 
- * Because these interfaces and primitives wrap lower-level operations with
- * various implementations, unless otherwise informed clients should not
- * assume they are safe for parallel execution.
- */
-namespace io {
+namespace store {
  /**
-  * ReadCloser is the interface that groups the basic Read and Close methods.
+  * Store defines a concurrent safe in memory key-value data store.
   */
- interface ReadCloser {
-  [key:string]: any;
+ interface Store<T> {
  }
- /**
-  * WriteCloser is the interface that groups the basic Write and Close methods.
-  */
- interface WriteCloser {
-  [key:string]: any;
+ interface Store<T> {
+  /**
+   * Reset clears the store and replaces the store data with a
+   * shallow copy of the provided newData.
+   */
+  reset(newData: _TygojaDict): void
+ }
+ interface Store<T> {
+  /**
+   * Length returns the current number of elements in the store.
+   */
+  length(): number
+ }
+ interface Store<T> {
+  /**
+   * RemoveAll removes all the existing store entries.
+   */
+  removeAll(): void
+ }
+ interface Store<T> {
+  /**
+   * Remove removes a single entry from the store.
+   * 
+   * Remove does nothing if key doesn't exist in the store.
+   */
+  remove(key: string): void
+ }
+ interface Store<T> {
+  /**
+   * Has checks if element with the specified key exist or not.
+   */
+  has(key: string): boolean
+ }
+ interface Store<T> {
+  /**
+   * Get returns a single element value from the store.
+   * 
+   * If key is not set, the zero T value is returned.
+   */
+  get(key: string): T
+ }
+ interface Store<T> {
+  /**
+   * GetAll returns a shallow copy of the current store data.
+   */
+  getAll(): _TygojaDict
+ }
+ interface Store<T> {
+  /**
+   * Set sets (or overwrite if already exist) a new value for key.
+   */
+  set(key: string, value: T): void
+ }
+ interface Store<T> {
+  /**
+   * SetIfLessThanLimit sets (or overwrite if already exist) a new value for key.
+   * 
+   * This method is similar to Set() but **it will skip adding new elements**
+   * to the store if the store length has reached the specified limit.
+   * false is returned if maxAllowedElements limit is reached.
+   */
+  setIfLessThanLimit(key: string, value: T, maxAllowedElements: number): boolean
  }
 }
 
@@ -14713,7 +14669,7 @@ namespace io {
  * the manuals for the appropriate operating system.
  * These calls return err == nil to indicate success; otherwise
  * err is an operating system error describing the failure.
- * On most systems, that error has type [Errno].
+ * On most systems, that error has type syscall.Errno.
  * 
  * NOTE: Most of the functions, types, and constants defined in
  * this package are also available in the [golang.org/x/sys] package.
@@ -14722,43 +14678,17 @@ namespace io {
  * See https://golang.org/s/go1.4-syscall for more information.
  */
 namespace syscall {
- /**
-  * SysProcIDMap holds Container ID to Host ID mappings used for User Namespaces in Linux.
-  * See user_namespaces(7).
-  * 
-  * Note that User Namespaces are not available on a number of popular Linux
-  * versions (due to security issues), or are available but subject to AppArmor
-  * restrictions like in Ubuntu 24.04.
-  */
- interface SysProcIDMap {
-  containerID: number // Container ID.
-  hostID: number // Host ID.
-  size: number // Size.
- }
  // @ts-ignore
  import errorspkg = errors
  /**
   * Credential holds user and group identities to be assumed
-  * by a child process started by [StartProcess].
+  * by a child process started by StartProcess.
   */
  interface Credential {
   uid: number // User ID.
   gid: number // Group ID.
   groups: Array<number> // Supplementary group IDs.
   noSetGroups: boolean // If true, don't set supplementary groups
- }
- // @ts-ignore
- import runtimesyscall = syscall
- /**
-  * A Signal is a number describing a process signal.
-  * It implements the [os.Signal] interface.
-  */
- interface Signal extends Number{}
- interface Signal {
-  signal(): void
- }
- interface Signal {
-  string(): string
  }
 }
 
@@ -14774,7 +14704,7 @@ namespace syscall {
  * changes for clock synchronization, and a “monotonic clock,” which is
  * not. The general rule is that the wall clock is for telling time and
  * the monotonic clock is for measuring time. Rather than split the API,
- * in this package the Time returned by [time.Now] contains both a wall
+ * in this package the Time returned by time.Now contains both a wall
  * clock reading and a monotonic clock reading; later time-telling
  * operations use the wall clock reading, but later time-measuring
  * operations, specifically comparisons and subtractions, use the
@@ -14791,7 +14721,7 @@ namespace syscall {
  * 	elapsed := t.Sub(start)
  * ```
  * 
- * Other idioms, such as [time.Since](start), [time.Until](deadline), and
+ * Other idioms, such as time.Since(start), time.Until(deadline), and
  * time.Now().Before(deadline), are similarly robust against wall clock
  * resets.
  * 
@@ -14816,26 +14746,23 @@ namespace syscall {
  * 
  * On some systems the monotonic clock will stop if the computer goes to sleep.
  * On such a system, t.Sub(u) may not accurately reflect the actual
- * time that passed between t and u. The same applies to other functions and
- * methods that subtract times, such as [Since], [Until], [Before], [After],
- * [Add], [Sub], [Equal] and [Compare]. In some cases, you may need to strip
- * the monotonic clock to get accurate results.
+ * time that passed between t and u.
  * 
  * Because the monotonic clock reading has no meaning outside
  * the current process, the serialized forms generated by t.GobEncode,
  * t.MarshalBinary, t.MarshalJSON, and t.MarshalText omit the monotonic
  * clock reading, and t.Format provides no format for it. Similarly, the
- * constructors [time.Date], [time.Parse], [time.ParseInLocation], and [time.Unix],
+ * constructors time.Date, time.Parse, time.ParseInLocation, and time.Unix,
  * as well as the unmarshalers t.GobDecode, t.UnmarshalBinary.
  * t.UnmarshalJSON, and t.UnmarshalText always create times with
  * no monotonic clock reading.
  * 
- * The monotonic clock reading exists only in [Time] values. It is not
- * a part of [Duration] values or the Unix times returned by t.Unix and
+ * The monotonic clock reading exists only in Time values. It is not
+ * a part of Duration values or the Unix times returned by t.Unix and
  * friends.
  * 
  * Note that the Go == operator compares not just the time instant but
- * also the [Location] and the monotonic clock reading. See the
+ * also the Location and the monotonic clock reading. See the
  * documentation for the Time type for a discussion of equality
  * testing for Time values.
  * 
@@ -14845,11 +14772,10 @@ namespace syscall {
  * 
  * # Timer Resolution
  * 
- * [Timer] resolution varies depending on the Go runtime, the operating system
+ * Timer resolution varies depending on the Go runtime, the operating system
  * and the underlying hardware.
- * On Unix, the resolution is ~1ms.
- * On Windows version 1803 and newer, the resolution is ~0.5ms.
- * On older Windows versions, the default resolution is ~16ms, but
+ * On Unix, the resolution is approximately 1ms.
+ * On Windows, the default resolution is approximately 16ms, but
  * a higher resolution may be requested using [golang.org/x/sys/windows.TimeBeginPeriod].
  */
 namespace time {
@@ -14888,7 +14814,7 @@ namespace time {
  interface Location {
   /**
    * String returns a descriptive name for the time zone information,
-   * corresponding to the name argument to [LoadLocation] or [FixedZone].
+   * corresponding to the name argument to LoadLocation or FixedZone.
    */
   string(): string
  }
@@ -14951,6 +14877,31 @@ namespace context {
 }
 
 /**
+ * Package io provides basic interfaces to I/O primitives.
+ * Its primary job is to wrap existing implementations of such primitives,
+ * such as those in package os, into shared public interfaces that
+ * abstract the functionality, plus some other related primitives.
+ * 
+ * Because these interfaces and primitives wrap lower-level operations with
+ * various implementations, unless otherwise informed clients should not
+ * assume they are safe for parallel execution.
+ */
+namespace io {
+ /**
+  * ReadCloser is the interface that groups the basic Read and Close methods.
+  */
+ interface ReadCloser {
+  [key:string]: any;
+ }
+ /**
+  * WriteCloser is the interface that groups the basic Write and Close methods.
+  */
+ interface WriteCloser {
+  [key:string]: any;
+ }
+}
+
+/**
  * Package fs defines basic interfaces to a file system.
  * A file system can be provided by the host operating system
  * but also by other packages.
@@ -15009,19 +14960,16 @@ namespace fs {
  * listed in /etc/resolv.conf, or it can use a cgo-based resolver that calls C
  * library routines such as getaddrinfo and getnameinfo.
  * 
- * On Unix the pure Go resolver is preferred over the cgo resolver, because a blocked DNS
- * request consumes only a goroutine, while a blocked C call consumes an operating system thread.
+ * By default the pure Go resolver is used, because a blocked DNS request consumes
+ * only a goroutine, while a blocked C call consumes an operating system thread.
  * When cgo is available, the cgo-based resolver is used instead under a variety of
  * conditions: on systems that do not let programs make direct DNS requests (OS X),
  * when the LOCALDOMAIN environment variable is present (even if empty),
  * when the RES_OPTIONS or HOSTALIASES environment variable is non-empty,
  * when the ASR_CONFIG environment variable is non-empty (OpenBSD only),
  * when /etc/resolv.conf or /etc/nsswitch.conf specify the use of features that the
- * Go resolver does not implement.
- * 
- * On all systems (except Plan 9), when the cgo resolver is being used
- * this package applies a concurrent cgo lookup limit to prevent the system
- * from running out of system threads. Currently, it is limited to 500 concurrent lookups.
+ * Go resolver does not implement, and when the name being looked up ends in .local
+ * or is an mDNS name.
  * 
  * The resolver decision can be overridden by setting the netdns value of the
  * GODEBUG environment variable (see package runtime) to go or cgo, as in:
@@ -15147,6 +15095,8 @@ namespace net {
    */
   addr(): Addr
  }
+ // @ts-ignore
+ import _cgopackage = cgo
 }
 
 /**
@@ -15470,8 +15420,8 @@ namespace textproto {
  * To protect against malicious inputs, this package sets limits on the size
  * of the MIME data it processes.
  * 
- * [Reader.NextPart] and [Reader.NextRawPart] limit the number of headers in a
- * part to 10000 and [Reader.ReadForm] limits the total number of headers in all
+ * Reader.NextPart and Reader.NextRawPart limit the number of headers in a
+ * part to 10000 and Reader.ReadForm limits the total number of headers in all
  * FileHeaders to 10000.
  * These limits may be adjusted with the GODEBUG=multipartmaxheaders=<values>
  * setting.
@@ -15479,6 +15429,11 @@ namespace textproto {
  * Reader.ReadForm further limits the number of parts in a form to 1000.
  * This limit may be adjusted with the GODEBUG=multipartmaxparts=<value>
  * setting.
+ */
+/**
+ * Copyright 2023 The Go Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
  */
 namespace multipart {
  interface Reader {
@@ -15488,7 +15443,7 @@ namespace multipart {
    * It stores up to maxMemory bytes + 10MB (reserved for non-file parts)
    * in memory. File parts which can't be stored in memory will be stored on
    * disk in temporary files.
-   * It returns [ErrMessageTooLarge] if all non-file parts can't be stored in
+   * It returns ErrMessageTooLarge if all non-file parts can't be stored in
    * memory.
    */
   readForm(maxMemory: number): (Form)
@@ -15496,7 +15451,7 @@ namespace multipart {
  /**
   * Form is a parsed multipart form.
   * Its File parts are stored either in memory or on disk,
-  * and are accessible via the [*FileHeader]'s Open method.
+  * and are accessible via the *FileHeader's Open method.
   * Its Value parts are stored as strings.
   * Both are keyed by field name.
   */
@@ -15506,7 +15461,7 @@ namespace multipart {
  }
  interface Form {
   /**
-   * RemoveAll removes any temporary files associated with a [Form].
+   * RemoveAll removes any temporary files associated with a Form.
    */
   removeAll(): void
  }
@@ -15528,7 +15483,7 @@ namespace multipart {
  interface Reader {
   /**
    * NextPart returns the next part in the multipart or an error.
-   * When there are no more parts, the error [io.EOF] is returned.
+   * When there are no more parts, the error io.EOF is returned.
    * 
    * As a special case, if the "Content-Transfer-Encoding" header
    * has a value of "quoted-printable", that header is instead
@@ -15539,9 +15494,9 @@ namespace multipart {
  interface Reader {
   /**
    * NextRawPart returns the next part in the multipart or an error.
-   * When there are no more parts, the error [io.EOF] is returned.
+   * When there are no more parts, the error io.EOF is returned.
    * 
-   * Unlike [Reader.NextPart], it does not have special handling for
+   * Unlike NextPart, it does not have special handling for
    * "Content-Transfer-Encoding: quoted-printable".
    */
   nextRawPart(): (Part)
@@ -15677,7 +15632,6 @@ namespace http {
  interface Cookie {
   name: string
   value: string
-  quoted: boolean // indicates whether the Value was originally quoted
   path: string // optional
   domain: string // optional
   expires: time.Time // optional
@@ -15691,7 +15645,6 @@ namespace http {
   secure: boolean
   httpOnly: boolean
   sameSite: SameSite
-  partitioned: boolean
   raw: string
   unparsed: Array<string> // Raw text of unparsed attribute-value pairs
  }
@@ -15975,252 +15928,6 @@ namespace http {
  interface ConnState extends Number{}
  interface ConnState {
   string(): string
- }
-}
-
-/**
- * Package oauth2 provides support for making
- * OAuth2 authorized and authenticated HTTP requests,
- * as specified in RFC 6749.
- * It can additionally grant authorization with Bearer JWT.
- */
-/**
- * Copyright 2023 The Go Authors. All rights reserved.
- * Use of this source code is governed by a BSD-style
- * license that can be found in the LICENSE file.
- */
-namespace oauth2 {
- /**
-  * An AuthCodeOption is passed to Config.AuthCodeURL.
-  */
- interface AuthCodeOption {
-  [key:string]: any;
- }
- /**
-  * Token represents the credentials used to authorize
-  * the requests to access protected resources on the OAuth 2.0
-  * provider's backend.
-  * 
-  * Most users of this package should not access fields of Token
-  * directly. They're exported mostly for use by related packages
-  * implementing derivative OAuth2 flows.
-  */
- interface Token {
-  /**
-   * AccessToken is the token that authorizes and authenticates
-   * the requests.
-   */
-  accessToken: string
-  /**
-   * TokenType is the type of token.
-   * The Type method returns either this or "Bearer", the default.
-   */
-  tokenType: string
-  /**
-   * RefreshToken is a token that's used by the application
-   * (as opposed to the user) to refresh the access token
-   * if it expires.
-   */
-  refreshToken: string
-  /**
-   * Expiry is the optional expiration time of the access token.
-   * 
-   * If zero, TokenSource implementations will reuse the same
-   * token forever and RefreshToken or equivalent
-   * mechanisms for that TokenSource will not be used.
-   */
-  expiry: time.Time
-  /**
-   * ExpiresIn is the OAuth2 wire format "expires_in" field,
-   * which specifies how many seconds later the token expires,
-   * relative to an unknown time base approximately around "now".
-   * It is the application's responsibility to populate
-   * `Expiry` from `ExpiresIn` when required.
-   */
-  expiresIn: number
- }
- interface Token {
-  /**
-   * Type returns t.TokenType if non-empty, else "Bearer".
-   */
-  type(): string
- }
- interface Token {
-  /**
-   * SetAuthHeader sets the Authorization header to r using the access
-   * token in t.
-   * 
-   * This method is unnecessary when using Transport or an HTTP Client
-   * returned by this package.
-   */
-  setAuthHeader(r: http.Request): void
- }
- interface Token {
-  /**
-   * WithExtra returns a new Token that's a clone of t, but using the
-   * provided raw extra map. This is only intended for use by packages
-   * implementing derivative OAuth2 flows.
-   */
-  withExtra(extra: {
-   }): (Token)
- }
- interface Token {
-  /**
-   * Extra returns an extra field.
-   * Extra fields are key-value pairs returned by the server as a
-   * part of the token retrieval response.
-   */
-  extra(key: string): {
- }
- }
- interface Token {
-  /**
-   * Valid reports whether t is non-nil, has an AccessToken, and is not expired.
-   */
-  valid(): boolean
- }
-}
-
-/**
- * Package types implements some commonly used db serializable types
- * like datetime, json, etc.
- */
-namespace types {
- /**
-  * DateTime represents a [time.Time] instance in UTC that is wrapped
-  * and serialized using the app default date layout.
-  */
- interface DateTime {
- }
- interface DateTime {
-  /**
-   * Time returns the internal [time.Time] instance.
-   */
-  time(): time.Time
- }
- interface DateTime {
-  /**
-   * IsZero checks whether the current DateTime instance has zero time value.
-   */
-  isZero(): boolean
- }
- interface DateTime {
-  /**
-   * String serializes the current DateTime instance into a formatted
-   * UTC date string.
-   * 
-   * The zero value is serialized to an empty string.
-   */
-  string(): string
- }
- interface DateTime {
-  /**
-   * MarshalJSON implements the [json.Marshaler] interface.
-   */
-  marshalJSON(): string|Array<number>
- }
- interface DateTime {
-  /**
-   * UnmarshalJSON implements the [json.Unmarshaler] interface.
-   */
-  unmarshalJSON(b: string|Array<number>): void
- }
- interface DateTime {
-  /**
-   * Value implements the [driver.Valuer] interface.
-   */
-  value(): any
- }
- interface DateTime {
-  /**
-   * Scan implements [sql.Scanner] interface to scan the provided value
-   * into the current DateTime instance.
-   */
-  scan(value: any): void
- }
-}
-
-namespace store {
- /**
-  * Store defines a concurrent safe in memory key-value data store.
-  */
- interface Store<T> {
- }
- interface Store<T> {
-  /**
-   * Reset clears the store and replaces the store data with a
-   * shallow copy of the provided newData.
-   */
-  reset(newData: _TygojaDict): void
- }
- interface Store<T> {
-  /**
-   * Length returns the current number of elements in the store.
-   */
-  length(): number
- }
- interface Store<T> {
-  /**
-   * RemoveAll removes all the existing store entries.
-   */
-  removeAll(): void
- }
- interface Store<T> {
-  /**
-   * Remove removes a single entry from the store.
-   * 
-   * Remove does nothing if key doesn't exist in the store.
-   */
-  remove(key: string): void
- }
- interface Store<T> {
-  /**
-   * Has checks if element with the specified key exist or not.
-   */
-  has(key: string): boolean
- }
- interface Store<T> {
-  /**
-   * Get returns a single element value from the store.
-   * 
-   * If key is not set, the zero T value is returned.
-   */
-  get(key: string): T
- }
- interface Store<T> {
-  /**
-   * GetAll returns a shallow copy of the current store data.
-   */
-  getAll(): _TygojaDict
- }
- interface Store<T> {
-  /**
-   * Set sets (or overwrite if already exist) a new value for key.
-   */
-  set(key: string, value: T): void
- }
- interface Store<T> {
-  /**
-   * SetIfLessThanLimit sets (or overwrite if already exist) a new value for key.
-   * 
-   * This method is similar to Set() but **it will skip adding new elements**
-   * to the store if the store length has reached the specified limit.
-   * false is returned if maxAllowedElements limit is reached.
-   */
-  setIfLessThanLimit(key: string, value: T, maxAllowedElements: number): boolean
- }
-}
-
-namespace mailer {
- /**
-  * Mailer defines a base mail client interface.
-  */
- interface Mailer {
-  [key:string]: any;
-  /**
-   * Send sends an email with the provided Message.
-   */
-  send(message: Message): void
  }
 }
 
@@ -16681,6 +16388,163 @@ namespace echo {
 }
 
 /**
+ * Package cobra is a commander providing a simple interface to create powerful modern CLI interfaces.
+ * In addition to providing an interface, Cobra simultaneously provides a controller to organize your application code.
+ */
+namespace cobra {
+ interface PositionalArgs {(cmd: Command, args: Array<string>): void }
+ // @ts-ignore
+ import flag = pflag
+ /**
+  * FParseErrWhitelist configures Flag parse errors to be ignored
+  */
+ interface FParseErrWhitelist extends _TygojaAny{}
+ /**
+  * Group Structure to manage groups for commands
+  */
+ interface Group {
+  id: string
+  title: string
+ }
+ /**
+  * ShellCompDirective is a bit map representing the different behaviors the shell
+  * can be instructed to have once completions have been provided.
+  */
+ interface ShellCompDirective extends Number{}
+ /**
+  * CompletionOptions are the options to control shell completion
+  */
+ interface CompletionOptions {
+  /**
+   * DisableDefaultCmd prevents Cobra from creating a default 'completion' command
+   */
+  disableDefaultCmd: boolean
+  /**
+   * DisableNoDescFlag prevents Cobra from creating the '--no-descriptions' flag
+   * for shells that support completion descriptions
+   */
+  disableNoDescFlag: boolean
+  /**
+   * DisableDescriptions turns off all completion descriptions for shells
+   * that support them
+   */
+  disableDescriptions: boolean
+  /**
+   * HiddenDefaultCmd makes the default 'completion' command hidden
+   */
+  hiddenDefaultCmd: boolean
+ }
+}
+
+namespace mailer {
+ /**
+  * Mailer defines a base mail client interface.
+  */
+ interface Mailer {
+  [key:string]: any;
+  /**
+   * Send sends an email with the provided Message.
+   */
+  send(message: Message): void
+ }
+}
+
+/**
+ * Package oauth2 provides support for making
+ * OAuth2 authorized and authenticated HTTP requests,
+ * as specified in RFC 6749.
+ * It can additionally grant authorization with Bearer JWT.
+ */
+/**
+ * Copyright 2023 The Go Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
+ */
+namespace oauth2 {
+ /**
+  * An AuthCodeOption is passed to Config.AuthCodeURL.
+  */
+ interface AuthCodeOption {
+  [key:string]: any;
+ }
+ /**
+  * Token represents the credentials used to authorize
+  * the requests to access protected resources on the OAuth 2.0
+  * provider's backend.
+  * 
+  * Most users of this package should not access fields of Token
+  * directly. They're exported mostly for use by related packages
+  * implementing derivative OAuth2 flows.
+  */
+ interface Token {
+  /**
+   * AccessToken is the token that authorizes and authenticates
+   * the requests.
+   */
+  accessToken: string
+  /**
+   * TokenType is the type of token.
+   * The Type method returns either this or "Bearer", the default.
+   */
+  tokenType: string
+  /**
+   * RefreshToken is a token that's used by the application
+   * (as opposed to the user) to refresh the access token
+   * if it expires.
+   */
+  refreshToken: string
+  /**
+   * Expiry is the optional expiration time of the access token.
+   * 
+   * If zero, TokenSource implementations will reuse the same
+   * token forever and RefreshToken or equivalent
+   * mechanisms for that TokenSource will not be used.
+   */
+  expiry: time.Time
+ }
+ interface Token {
+  /**
+   * Type returns t.TokenType if non-empty, else "Bearer".
+   */
+  type(): string
+ }
+ interface Token {
+  /**
+   * SetAuthHeader sets the Authorization header to r using the access
+   * token in t.
+   * 
+   * This method is unnecessary when using Transport or an HTTP Client
+   * returned by this package.
+   */
+  setAuthHeader(r: http.Request): void
+ }
+ interface Token {
+  /**
+   * WithExtra returns a new Token that's a clone of t, but using the
+   * provided raw extra map. This is only intended for use by packages
+   * implementing derivative OAuth2 flows.
+   */
+  withExtra(extra: {
+   }): (Token)
+ }
+ interface Token {
+  /**
+   * Extra returns an extra field.
+   * Extra fields are key-value pairs returned by the server as a
+   * part of the token retrieval response.
+   */
+  extra(key: string): {
+ }
+ }
+ interface Token {
+  /**
+   * Valid reports whether t is non-nil, has an AccessToken, and is not expired.
+   */
+  valid(): boolean
+ }
+}
+
+/**
  * Package sql provides a generic interface around SQL (or SQL-like)
  * databases.
  * 
@@ -16896,153 +16760,151 @@ namespace sql {
  }
 }
 
-namespace settings {
- // @ts-ignore
- import validation = ozzo_validation
- interface TokenConfig {
-  secret: string
-  duration: number
+namespace migrate {
+ interface Migration {
+  file: string
+  up: (db: dbx.Builder) => void
+  down: (db: dbx.Builder) => void
  }
- interface TokenConfig {
-  /**
-   * Validate makes TokenConfig validatable by implementing [validation.Validatable] interface.
-   */
-  validate(): void
+}
+
+namespace hook {
+ /**
+  * Hook defines a concurrent safe structure for handling event hooks
+  * (aka. callbacks propagation).
+  */
+ interface Hook<T> {
  }
- interface SmtpConfig {
-  enabled: boolean
-  host: string
-  port: number
-  username: string
-  password: string
+ interface Hook<T> {
   /**
-   * SMTP AUTH - PLAIN (default) or LOGIN
-   */
-  authMethod: string
-  /**
-   * Whether to enforce TLS encryption for the mail server connection.
+   * PreAdd registers a new handler to the hook by prepending it to the existing queue.
    * 
-   * When set to false StartTLS command is send, leaving the server
-   * to decide whether to upgrade the connection or not.
+   * Returns an autogenerated hook id that could be used later to remove the hook with Hook.Remove(id).
    */
-  tls: boolean
+  preAdd(fn: Handler<T>): string
+ }
+ interface Hook<T> {
   /**
-   * LocalName is optional domain name or IP address used for the
-   * EHLO/HELO exchange (if not explicitly set, defaults to "localhost").
+   * Add registers a new handler to the hook by appending it to the existing queue.
    * 
-   * This is required only by some SMTP servers, such as Gmail SMTP-relay.
+   * Returns an autogenerated hook id that could be used later to remove the hook with Hook.Remove(id).
    */
-  localName: string
+  add(fn: Handler<T>): string
  }
- interface SmtpConfig {
+ interface Hook<T> {
   /**
-   * Validate makes SmtpConfig validatable by implementing [validation.Validatable] interface.
+   * Remove removes a single hook handler by its id.
    */
-  validate(): void
+  remove(id: string): void
  }
- interface S3Config {
-  enabled: boolean
-  bucket: string
-  region: string
-  endpoint: string
-  accessKey: string
-  secret: string
-  forcePathStyle: boolean
- }
- interface S3Config {
+ interface Hook<T> {
   /**
-   * Validate makes S3Config validatable by implementing [validation.Validatable] interface.
+   * RemoveAll removes all registered handlers.
    */
-  validate(): void
+  removeAll(): void
  }
- interface BackupsConfig {
+ interface Hook<T> {
   /**
-   * Cron is a cron expression to schedule auto backups, eg. "* * * * *".
+   * Trigger executes all registered hook handlers one by one
+   * with the specified `data` as an argument.
    * 
-   * Leave it empty to disable the auto backups functionality.
-   */
-  cron: string
-  /**
-   * CronMaxKeep is the max number of cron generated backups to
-   * keep before removing older entries.
+   * Optionally, this method allows also to register additional one off
+   * handlers that will be temporary appended to the handlers queue.
    * 
-   * This field works only when the cron config has valid cron expression.
+   * The execution stops when:
+   * - hook.StopPropagation is returned in one of the handlers
+   * - any non-nil error is returned in one of the handlers
    */
-  cronMaxKeep: number
-  /**
-   * S3 is an optional S3 storage config specifying where to store the app backups.
-   */
-  s3: S3Config
- }
- interface BackupsConfig {
-  /**
-   * Validate makes BackupsConfig validatable by implementing [validation.Validatable] interface.
-   */
-  validate(): void
- }
- interface MetaConfig {
-  appName: string
-  appUrl: string
-  hideControls: boolean
-  senderName: string
-  senderAddress: string
-  verificationTemplate: EmailTemplate
-  resetPasswordTemplate: EmailTemplate
-  confirmEmailChangeTemplate: EmailTemplate
- }
- interface MetaConfig {
-  /**
-   * Validate makes MetaConfig validatable by implementing [validation.Validatable] interface.
-   */
-  validate(): void
- }
- interface LogsConfig {
-  maxDays: number
-  minLevel: number
-  logIp: boolean
- }
- interface LogsConfig {
-  /**
-   * Validate makes LogsConfig validatable by implementing [validation.Validatable] interface.
-   */
-  validate(): void
- }
- interface AuthProviderConfig {
-  enabled: boolean
-  clientId: string
-  clientSecret: string
-  authUrl: string
-  tokenUrl: string
-  userApiUrl: string
-  displayName: string
-  pkce?: boolean
- }
- interface AuthProviderConfig {
-  /**
-   * Validate makes `ProviderConfig` validatable by implementing [validation.Validatable] interface.
-   */
-  validate(): void
- }
- interface AuthProviderConfig {
-  /**
-   * SetupProvider loads the current AuthProviderConfig into the specified provider.
-   */
-  setupProvider(provider: auth.Provider): void
+  trigger(data: T, ...oneOffHandlers: Handler<T>[]): void
  }
  /**
-  * Deprecated: Will be removed in v0.9+
+  * TaggedHook defines a proxy hook which register handlers that are triggered only
+  * if the TaggedHook.tags are empty or includes at least one of the event data tag(s).
   */
- interface EmailAuthConfig {
-  enabled: boolean
-  exceptDomains: Array<string>
-  onlyDomains: Array<string>
-  minPasswordLength: number
+ type _subWQlyJ<T> = mainHook<T>
+ interface TaggedHook<T> extends _subWQlyJ<T> {
  }
- interface EmailAuthConfig {
+ interface TaggedHook<T> {
   /**
-   * Deprecated: Will be removed in v0.9+
+   * CanTriggerOn checks if the current TaggedHook can be triggered with
+   * the provided event data tags.
    */
-  validate(): void
+  canTriggerOn(tags: Array<string>): boolean
+ }
+ interface TaggedHook<T> {
+  /**
+   * PreAdd registers a new handler to the hook by prepending it to the existing queue.
+   * 
+   * The fn handler will be called only if the event data tags satisfy h.CanTriggerOn.
+   */
+  preAdd(fn: Handler<T>): string
+ }
+ interface TaggedHook<T> {
+  /**
+   * Add registers a new handler to the hook by appending it to the existing queue.
+   * 
+   * The fn handler will be called only if the event data tags satisfy h.CanTriggerOn.
+   */
+  add(fn: Handler<T>): string
+ }
+}
+
+/**
+ * Package types implements some commonly used db serializable types
+ * like datetime, json, etc.
+ */
+namespace types {
+ /**
+  * DateTime represents a [time.Time] instance in UTC that is wrapped
+  * and serialized using the app default date layout.
+  */
+ interface DateTime {
+ }
+ interface DateTime {
+  /**
+   * Time returns the internal [time.Time] instance.
+   */
+  time(): time.Time
+ }
+ interface DateTime {
+  /**
+   * IsZero checks whether the current DateTime instance has zero time value.
+   */
+  isZero(): boolean
+ }
+ interface DateTime {
+  /**
+   * String serializes the current DateTime instance into a formatted
+   * UTC date string.
+   * 
+   * The zero value is serialized to an empty string.
+   */
+  string(): string
+ }
+ interface DateTime {
+  /**
+   * MarshalJSON implements the [json.Marshaler] interface.
+   */
+  marshalJSON(): string|Array<number>
+ }
+ interface DateTime {
+  /**
+   * UnmarshalJSON implements the [json.Unmarshaler] interface.
+   */
+  unmarshalJSON(b: string|Array<number>): void
+ }
+ interface DateTime {
+  /**
+   * Value implements the [driver.Valuer] interface.
+   */
+  value(): any
+ }
+ interface DateTime {
+  /**
+   * Scan implements [sql.Scanner] interface to scan the provided value
+   * into the current DateTime instance.
+   */
+  scan(value: any): void
  }
 }
 
@@ -17281,8 +17143,8 @@ namespace models {
    */
   validate(): void
  }
- type _subWpQfF = BaseModel
- interface Log extends _subWpQfF {
+ type _subhfNfA = BaseModel
+ interface Log extends _subhfNfA {
   data: types.JsonMap
   message: string
   level: number
@@ -17290,8 +17152,8 @@ namespace models {
  interface Log {
   tableName(): string
  }
- type _subuzORL = BaseModel
- interface Param extends _subuzORL {
+ type _sublnCdX = BaseModel
+ interface Param extends _sublnCdX {
   key: string
   value: types.JsonRaw
  }
@@ -17312,6 +17174,156 @@ namespace models {
  }
 }
 
+namespace settings {
+ // @ts-ignore
+ import validation = ozzo_validation
+ interface TokenConfig {
+  secret: string
+  duration: number
+ }
+ interface TokenConfig {
+  /**
+   * Validate makes TokenConfig validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface SmtpConfig {
+  enabled: boolean
+  host: string
+  port: number
+  username: string
+  password: string
+  /**
+   * SMTP AUTH - PLAIN (default) or LOGIN
+   */
+  authMethod: string
+  /**
+   * Whether to enforce TLS encryption for the mail server connection.
+   * 
+   * When set to false StartTLS command is send, leaving the server
+   * to decide whether to upgrade the connection or not.
+   */
+  tls: boolean
+  /**
+   * LocalName is optional domain name or IP address used for the
+   * EHLO/HELO exchange (if not explicitly set, defaults to "localhost").
+   * 
+   * This is required only by some SMTP servers, such as Gmail SMTP-relay.
+   */
+  localName: string
+ }
+ interface SmtpConfig {
+  /**
+   * Validate makes SmtpConfig validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface S3Config {
+  enabled: boolean
+  bucket: string
+  region: string
+  endpoint: string
+  accessKey: string
+  secret: string
+  forcePathStyle: boolean
+ }
+ interface S3Config {
+  /**
+   * Validate makes S3Config validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface BackupsConfig {
+  /**
+   * Cron is a cron expression to schedule auto backups, eg. "* * * * *".
+   * 
+   * Leave it empty to disable the auto backups functionality.
+   */
+  cron: string
+  /**
+   * CronMaxKeep is the max number of cron generated backups to
+   * keep before removing older entries.
+   * 
+   * This field works only when the cron config has valid cron expression.
+   */
+  cronMaxKeep: number
+  /**
+   * S3 is an optional S3 storage config specifying where to store the app backups.
+   */
+  s3: S3Config
+ }
+ interface BackupsConfig {
+  /**
+   * Validate makes BackupsConfig validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface MetaConfig {
+  appName: string
+  appUrl: string
+  hideControls: boolean
+  senderName: string
+  senderAddress: string
+  verificationTemplate: EmailTemplate
+  resetPasswordTemplate: EmailTemplate
+  confirmEmailChangeTemplate: EmailTemplate
+ }
+ interface MetaConfig {
+  /**
+   * Validate makes MetaConfig validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface LogsConfig {
+  maxDays: number
+  minLevel: number
+  logIp: boolean
+ }
+ interface LogsConfig {
+  /**
+   * Validate makes LogsConfig validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface AuthProviderConfig {
+  enabled: boolean
+  clientId: string
+  clientSecret: string
+  authUrl: string
+  tokenUrl: string
+  userApiUrl: string
+  displayName: string
+  pkce?: boolean
+ }
+ interface AuthProviderConfig {
+  /**
+   * Validate makes `ProviderConfig` validatable by implementing [validation.Validatable] interface.
+   */
+  validate(): void
+ }
+ interface AuthProviderConfig {
+  /**
+   * SetupProvider loads the current AuthProviderConfig into the specified provider.
+   */
+  setupProvider(provider: auth.Provider): void
+ }
+ /**
+  * Deprecated: Will be removed in v0.9+
+  */
+ interface EmailAuthConfig {
+  enabled: boolean
+  exceptDomains: Array<string>
+  onlyDomains: Array<string>
+  minPasswordLength: number
+ }
+ interface EmailAuthConfig {
+  /**
+   * Deprecated: Will be removed in v0.9+
+   */
+  validate(): void
+ }
+}
+
 /**
  * Package daos handles common PocketBase DB model manipulations.
  * 
@@ -17328,87 +17340,6 @@ namespace daos {
  interface ExpandFetchFunc {(relCollection: models.Collection, relIds: Array<string>): Array<(models.Record | undefined)> }
  // @ts-ignore
  import validation = ozzo_validation
-}
-
-namespace hook {
- /**
-  * Hook defines a concurrent safe structure for handling event hooks
-  * (aka. callbacks propagation).
-  */
- interface Hook<T> {
- }
- interface Hook<T> {
-  /**
-   * PreAdd registers a new handler to the hook by prepending it to the existing queue.
-   * 
-   * Returns an autogenerated hook id that could be used later to remove the hook with Hook.Remove(id).
-   */
-  preAdd(fn: Handler<T>): string
- }
- interface Hook<T> {
-  /**
-   * Add registers a new handler to the hook by appending it to the existing queue.
-   * 
-   * Returns an autogenerated hook id that could be used later to remove the hook with Hook.Remove(id).
-   */
-  add(fn: Handler<T>): string
- }
- interface Hook<T> {
-  /**
-   * Remove removes a single hook handler by its id.
-   */
-  remove(id: string): void
- }
- interface Hook<T> {
-  /**
-   * RemoveAll removes all registered handlers.
-   */
-  removeAll(): void
- }
- interface Hook<T> {
-  /**
-   * Trigger executes all registered hook handlers one by one
-   * with the specified `data` as an argument.
-   * 
-   * Optionally, this method allows also to register additional one off
-   * handlers that will be temporary appended to the handlers queue.
-   * 
-   * The execution stops when:
-   * - hook.StopPropagation is returned in one of the handlers
-   * - any non-nil error is returned in one of the handlers
-   */
-  trigger(data: T, ...oneOffHandlers: Handler<T>[]): void
- }
- /**
-  * TaggedHook defines a proxy hook which register handlers that are triggered only
-  * if the TaggedHook.tags are empty or includes at least one of the event data tag(s).
-  */
- type _sublZLEH<T> = mainHook<T>
- interface TaggedHook<T> extends _sublZLEH<T> {
- }
- interface TaggedHook<T> {
-  /**
-   * CanTriggerOn checks if the current TaggedHook can be triggered with
-   * the provided event data tags.
-   */
-  canTriggerOn(tags: Array<string>): boolean
- }
- interface TaggedHook<T> {
-  /**
-   * PreAdd registers a new handler to the hook by prepending it to the existing queue.
-   * 
-   * The fn handler will be called only if the event data tags satisfy h.CanTriggerOn.
-   */
-  preAdd(fn: Handler<T>): string
- }
- interface TaggedHook<T> {
-  /**
-   * Add registers a new handler to the hook by appending it to the existing queue.
-   * 
-   * The fn handler will be called only if the event data tags satisfy h.CanTriggerOn.
-   */
-  add(fn: Handler<T>): string
- }
 }
 
 /**
@@ -17775,10 +17706,8 @@ namespace hook {
  * Now computeExpensiveValue will only be called when the line is enabled.
  * 
  * The built-in handlers acquire a lock before calling [io.Writer.Write]
- * to ensure that exactly one [Record] is written at a time in its entirety.
- * Although each log record has a timestamp,
- * the built-in handlers do not use that time to sort the written records.
- * User-defined handlers are responsible for their own locking and sorting.
+ * to ensure that each record is written in one piece. User-defined
+ * handlers are responsible for their own locking.
  * 
  * # Writing a handler
  * 
@@ -17961,12 +17890,12 @@ namespace core {
   httpContext: echo.Context
   error: Error
  }
- type _subKMccQ = BaseModelEvent
- interface ModelEvent extends _subKMccQ {
+ type _subdfssV = BaseModelEvent
+ interface ModelEvent extends _subdfssV {
   dao?: daos.Dao
  }
- type _subbaMsx = BaseCollectionEvent
- interface MailerRecordEvent extends _subbaMsx {
+ type _subjOUNs = BaseCollectionEvent
+ interface MailerRecordEvent extends _subjOUNs {
   mailClient: mailer.Mailer
   message?: mailer.Message
   record?: models.Record
@@ -18006,50 +17935,50 @@ namespace core {
   oldSettings?: settings.Settings
   newSettings?: settings.Settings
  }
- type _subwUSsg = BaseCollectionEvent
- interface RecordsListEvent extends _subwUSsg {
+ type _subwakKJ = BaseCollectionEvent
+ interface RecordsListEvent extends _subwakKJ {
   httpContext: echo.Context
   records: Array<(models.Record | undefined)>
   result?: search.Result
  }
- type _subSuCxZ = BaseCollectionEvent
- interface RecordViewEvent extends _subSuCxZ {
+ type _subnxTdl = BaseCollectionEvent
+ interface RecordViewEvent extends _subnxTdl {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subOIUfd = BaseCollectionEvent
- interface RecordCreateEvent extends _subOIUfd {
-  httpContext: echo.Context
-  record?: models.Record
-  uploadedFiles: _TygojaDict
- }
- type _subndfPe = BaseCollectionEvent
- interface RecordUpdateEvent extends _subndfPe {
+ type _subIgMos = BaseCollectionEvent
+ interface RecordCreateEvent extends _subIgMos {
   httpContext: echo.Context
   record?: models.Record
   uploadedFiles: _TygojaDict
  }
- type _subhhPha = BaseCollectionEvent
- interface RecordDeleteEvent extends _subhhPha {
+ type _subkSQUr = BaseCollectionEvent
+ interface RecordUpdateEvent extends _subkSQUr {
+  httpContext: echo.Context
+  record?: models.Record
+  uploadedFiles: _TygojaDict
+ }
+ type _subIKqLa = BaseCollectionEvent
+ interface RecordDeleteEvent extends _subIKqLa {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subjKIme = BaseCollectionEvent
- interface RecordAuthEvent extends _subjKIme {
+ type _subWTRcD = BaseCollectionEvent
+ interface RecordAuthEvent extends _subWTRcD {
   httpContext: echo.Context
   record?: models.Record
   token: string
   meta: any
  }
- type _subMzagN = BaseCollectionEvent
- interface RecordAuthWithPasswordEvent extends _subMzagN {
+ type _subflYAV = BaseCollectionEvent
+ interface RecordAuthWithPasswordEvent extends _subflYAV {
   httpContext: echo.Context
   record?: models.Record
   identity: string
   password: string
  }
- type _subnprfs = BaseCollectionEvent
- interface RecordAuthWithOAuth2Event extends _subnprfs {
+ type _subglgYl = BaseCollectionEvent
+ interface RecordAuthWithOAuth2Event extends _subglgYl {
   httpContext: echo.Context
   providerName: string
   providerClient: auth.Provider
@@ -18057,49 +17986,49 @@ namespace core {
   oAuth2User?: auth.AuthUser
   isNewRecord: boolean
  }
- type _subBxwEM = BaseCollectionEvent
- interface RecordAuthRefreshEvent extends _subBxwEM {
+ type _subGsVYn = BaseCollectionEvent
+ interface RecordAuthRefreshEvent extends _subGsVYn {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subxYtTe = BaseCollectionEvent
- interface RecordRequestPasswordResetEvent extends _subxYtTe {
+ type _subkxHiI = BaseCollectionEvent
+ interface RecordRequestPasswordResetEvent extends _subkxHiI {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subRKUzR = BaseCollectionEvent
- interface RecordConfirmPasswordResetEvent extends _subRKUzR {
+ type _subawyTy = BaseCollectionEvent
+ interface RecordConfirmPasswordResetEvent extends _subawyTy {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subCsAJx = BaseCollectionEvent
- interface RecordRequestVerificationEvent extends _subCsAJx {
+ type _subwfUnF = BaseCollectionEvent
+ interface RecordRequestVerificationEvent extends _subwfUnF {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subWXfwy = BaseCollectionEvent
- interface RecordConfirmVerificationEvent extends _subWXfwy {
+ type _subEOCFC = BaseCollectionEvent
+ interface RecordConfirmVerificationEvent extends _subEOCFC {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subDwvoH = BaseCollectionEvent
- interface RecordRequestEmailChangeEvent extends _subDwvoH {
+ type _subrfYhD = BaseCollectionEvent
+ interface RecordRequestEmailChangeEvent extends _subrfYhD {
   httpContext: echo.Context
   record?: models.Record
  }
- type _subwlCeW = BaseCollectionEvent
- interface RecordConfirmEmailChangeEvent extends _subwlCeW {
+ type _subEtuhY = BaseCollectionEvent
+ interface RecordConfirmEmailChangeEvent extends _subEtuhY {
   httpContext: echo.Context
   record?: models.Record
  }
- type _sublLDXl = BaseCollectionEvent
- interface RecordListExternalAuthsEvent extends _sublLDXl {
+ type _subWVjfz = BaseCollectionEvent
+ interface RecordListExternalAuthsEvent extends _subWVjfz {
   httpContext: echo.Context
   record?: models.Record
   externalAuths: Array<(models.ExternalAuth | undefined)>
  }
- type _subrvhdJ = BaseCollectionEvent
- interface RecordUnlinkExternalAuthEvent extends _subrvhdJ {
+ type _subQtMyd = BaseCollectionEvent
+ interface RecordUnlinkExternalAuthEvent extends _subQtMyd {
   httpContext: echo.Context
   record?: models.Record
   externalAuth?: models.ExternalAuth
@@ -18153,95 +18082,38 @@ namespace core {
   collections: Array<(models.Collection | undefined)>
   result?: search.Result
  }
- type _subgkTpy = BaseCollectionEvent
- interface CollectionViewEvent extends _subgkTpy {
+ type _subAjpmm = BaseCollectionEvent
+ interface CollectionViewEvent extends _subAjpmm {
   httpContext: echo.Context
  }
- type _subthylS = BaseCollectionEvent
- interface CollectionCreateEvent extends _subthylS {
+ type _subAqAeJ = BaseCollectionEvent
+ interface CollectionCreateEvent extends _subAqAeJ {
   httpContext: echo.Context
  }
- type _subdwBvz = BaseCollectionEvent
- interface CollectionUpdateEvent extends _subdwBvz {
+ type _subzoVSx = BaseCollectionEvent
+ interface CollectionUpdateEvent extends _subzoVSx {
   httpContext: echo.Context
  }
- type _subEsmEe = BaseCollectionEvent
- interface CollectionDeleteEvent extends _subEsmEe {
+ type _subdneNg = BaseCollectionEvent
+ interface CollectionDeleteEvent extends _subdneNg {
   httpContext: echo.Context
  }
  interface CollectionsImportEvent {
   httpContext: echo.Context
   collections: Array<(models.Collection | undefined)>
  }
- type _subCrHsh = BaseModelEvent
- interface FileTokenEvent extends _subCrHsh {
+ type _subqaPWL = BaseModelEvent
+ interface FileTokenEvent extends _subqaPWL {
   httpContext: echo.Context
   token: string
  }
- type _subilHAM = BaseCollectionEvent
- interface FileDownloadEvent extends _subilHAM {
+ type _subgzecg = BaseCollectionEvent
+ interface FileDownloadEvent extends _subgzecg {
   httpContext: echo.Context
   record?: models.Record
   fileField?: schema.SchemaField
   servedPath: string
   servedName: string
- }
-}
-
-namespace migrate {
- interface Migration {
-  file: string
-  up: (db: dbx.Builder) => void
-  down: (db: dbx.Builder) => void
- }
-}
-
-/**
- * Package cobra is a commander providing a simple interface to create powerful modern CLI interfaces.
- * In addition to providing an interface, Cobra simultaneously provides a controller to organize your application code.
- */
-namespace cobra {
- interface PositionalArgs {(cmd: Command, args: Array<string>): void }
- // @ts-ignore
- import flag = pflag
- /**
-  * FParseErrWhitelist configures Flag parse errors to be ignored
-  */
- interface FParseErrWhitelist extends _TygojaAny{}
- /**
-  * Group Structure to manage groups for commands
-  */
- interface Group {
-  id: string
-  title: string
- }
- /**
-  * ShellCompDirective is a bit map representing the different behaviors the shell
-  * can be instructed to have once completions have been provided.
-  */
- interface ShellCompDirective extends Number{}
- /**
-  * CompletionOptions are the options to control shell completion
-  */
- interface CompletionOptions {
-  /**
-   * DisableDefaultCmd prevents Cobra from creating a default 'completion' command
-   */
-  disableDefaultCmd: boolean
-  /**
-   * DisableNoDescFlag prevents Cobra from creating the '--no-descriptions' flag
-   * for shells that support completion descriptions
-   */
-  disableNoDescFlag: boolean
-  /**
-   * DisableDescriptions turns off all completion descriptions for shells
-   * that support them
-   */
-  disableDescriptions: boolean
-  /**
-   * HiddenDefaultCmd makes the default 'completion' command hidden
-   */
-  hiddenDefaultCmd: boolean
  }
 }
 
@@ -18279,44 +18151,17 @@ namespace url {
 }
 
 /**
- * Package types implements some commonly used db serializable types
- * like datetime, json, etc.
+ * Package bufio implements buffered I/O. It wraps an io.Reader or io.Writer
+ * object, creating another object (Reader or Writer) that also implements
+ * the interface but provides buffering and some help for textual I/O.
  */
-namespace types {
+namespace bufio {
  /**
-  * JsonRaw defines a json value type that is safe for db read/write.
+  * ReadWriter stores pointers to a [Reader] and a [Writer].
+  * It implements [io.ReadWriter].
   */
- interface JsonRaw extends Array<number>{}
- interface JsonRaw {
-  /**
-   * String returns the current JsonRaw instance as a json encoded string.
-   */
-  string(): string
- }
- interface JsonRaw {
-  /**
-   * MarshalJSON implements the [json.Marshaler] interface.
-   */
-  marshalJSON(): string|Array<number>
- }
- interface JsonRaw {
-  /**
-   * UnmarshalJSON implements the [json.Unmarshaler] interface.
-   */
-  unmarshalJSON(b: string|Array<number>): void
- }
- interface JsonRaw {
-  /**
-   * Value implements the [driver.Valuer] interface.
-   */
-  value(): any
- }
- interface JsonRaw {
-  /**
-   * Scan implements [sql.Scanner] interface to scan the provided value
-   * into the current JsonRaw instance.
-   */
-  scan(value: any): void
+ type _subkgDPa = Reader&Writer
+ interface ReadWriter extends _subkgDPa {
  }
 }
 
@@ -18368,19 +18213,16 @@ namespace types {
  * listed in /etc/resolv.conf, or it can use a cgo-based resolver that calls C
  * library routines such as getaddrinfo and getnameinfo.
  * 
- * On Unix the pure Go resolver is preferred over the cgo resolver, because a blocked DNS
- * request consumes only a goroutine, while a blocked C call consumes an operating system thread.
+ * By default the pure Go resolver is used, because a blocked DNS request consumes
+ * only a goroutine, while a blocked C call consumes an operating system thread.
  * When cgo is available, the cgo-based resolver is used instead under a variety of
  * conditions: on systems that do not let programs make direct DNS requests (OS X),
  * when the LOCALDOMAIN environment variable is present (even if empty),
  * when the RES_OPTIONS or HOSTALIASES environment variable is non-empty,
  * when the ASR_CONFIG environment variable is non-empty (OpenBSD only),
  * when /etc/resolv.conf or /etc/nsswitch.conf specify the use of features that the
- * Go resolver does not implement.
- * 
- * On all systems (except Plan 9), when the cgo resolver is being used
- * this package applies a concurrent cgo lookup limit to prevent the system
- * from running out of system threads. Currently, it is limited to 500 concurrent lookups.
+ * Go resolver does not implement, and when the name being looked up ends in .local
+ * or is an mDNS name.
  * 
  * The resolver decision can be overridden by setting the netdns value of the
  * GODEBUG environment variable (see package runtime) to go or cgo, as in:
@@ -18426,21 +18268,8 @@ namespace net {
   network(): string // name of the network (for example, "tcp", "udp")
   string(): string // string form of address (for example, "192.0.2.1:25", "[2001:db8::1]:80")
  }
-}
-
-/**
- * Package bufio implements buffered I/O. It wraps an io.Reader or io.Writer
- * object, creating another object (Reader or Writer) that also implements
- * the interface but provides buffering and some help for textual I/O.
- */
-namespace bufio {
- /**
-  * ReadWriter stores pointers to a [Reader] and a [Writer].
-  * It implements [io.ReadWriter].
-  */
- type _subFtvZa = Reader&Writer
- interface ReadWriter extends _subFtvZa {
- }
+ // @ts-ignore
+ import _cgopackage = cgo
 }
 
 /**
@@ -18455,8 +18284,8 @@ namespace bufio {
  * To protect against malicious inputs, this package sets limits on the size
  * of the MIME data it processes.
  * 
- * [Reader.NextPart] and [Reader.NextRawPart] limit the number of headers in a
- * part to 10000 and [Reader.ReadForm] limits the total number of headers in all
+ * Reader.NextPart and Reader.NextRawPart limit the number of headers in a
+ * part to 10000 and Reader.ReadForm limits the total number of headers in all
  * FileHeaders to 10000.
  * These limits may be adjusted with the GODEBUG=multipartmaxheaders=<values>
  * setting.
@@ -18464,6 +18293,11 @@ namespace bufio {
  * Reader.ReadForm further limits the number of parts in a form to 1000.
  * This limit may be adjusted with the GODEBUG=multipartmaxparts=<value>
  * setting.
+ */
+/**
+ * Copyright 2023 The Go Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
  */
 namespace multipart {
  /**
@@ -18486,7 +18320,7 @@ namespace multipart {
  }
  interface Part {
   /**
-   * FileName returns the filename parameter of the [Part]'s Content-Disposition
+   * FileName returns the filename parameter of the Part's Content-Disposition
    * header. If not empty, the filename is passed through filepath.Base (which is
    * platform dependent) before being returned.
    */
@@ -18504,7 +18338,155 @@ namespace multipart {
  }
 }
 
+/**
+ * Package http provides HTTP client and server implementations.
+ * 
+ * [Get], [Head], [Post], and [PostForm] make HTTP (or HTTPS) requests:
+ * 
+ * ```
+ * 	resp, err := http.Get("http://example.com/")
+ * 	...
+ * 	resp, err := http.Post("http://example.com/upload", "image/jpeg", &buf)
+ * 	...
+ * 	resp, err := http.PostForm("http://example.com/form",
+ * 		url.Values{"key": {"Value"}, "id": {"123"}})
+ * ```
+ * 
+ * The caller must close the response body when finished with it:
+ * 
+ * ```
+ * 	resp, err := http.Get("http://example.com/")
+ * 	if err != nil {
+ * 		// handle error
+ * 	}
+ * 	defer resp.Body.Close()
+ * 	body, err := io.ReadAll(resp.Body)
+ * 	// ...
+ * ```
+ * 
+ * # Clients and Transports
+ * 
+ * For control over HTTP client headers, redirect policy, and other
+ * settings, create a [Client]:
+ * 
+ * ```
+ * 	client := &http.Client{
+ * 		CheckRedirect: redirectPolicyFunc,
+ * 	}
+ * 
+ * 	resp, err := client.Get("http://example.com")
+ * 	// ...
+ * 
+ * 	req, err := http.NewRequest("GET", "http://example.com", nil)
+ * 	// ...
+ * 	req.Header.Add("If-None-Match", `W/"wyzzy"`)
+ * 	resp, err := client.Do(req)
+ * 	// ...
+ * ```
+ * 
+ * For control over proxies, TLS configuration, keep-alives,
+ * compression, and other settings, create a [Transport]:
+ * 
+ * ```
+ * 	tr := &http.Transport{
+ * 		MaxIdleConns:       10,
+ * 		IdleConnTimeout:    30 * time.Second,
+ * 		DisableCompression: true,
+ * 	}
+ * 	client := &http.Client{Transport: tr}
+ * 	resp, err := client.Get("https://example.com")
+ * ```
+ * 
+ * Clients and Transports are safe for concurrent use by multiple
+ * goroutines and for efficiency should only be created once and re-used.
+ * 
+ * # Servers
+ * 
+ * ListenAndServe starts an HTTP server with a given address and handler.
+ * The handler is usually nil, which means to use [DefaultServeMux].
+ * [Handle] and [HandleFunc] add handlers to [DefaultServeMux]:
+ * 
+ * ```
+ * 	http.Handle("/foo", fooHandler)
+ * 
+ * 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+ * 		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+ * 	})
+ * 
+ * 	log.Fatal(http.ListenAndServe(":8080", nil))
+ * ```
+ * 
+ * More control over the server's behavior is available by creating a
+ * custom Server:
+ * 
+ * ```
+ * 	s := &http.Server{
+ * 		Addr:           ":8080",
+ * 		Handler:        myHandler,
+ * 		ReadTimeout:    10 * time.Second,
+ * 		WriteTimeout:   10 * time.Second,
+ * 		MaxHeaderBytes: 1 << 20,
+ * 	}
+ * 	log.Fatal(s.ListenAndServe())
+ * ```
+ * 
+ * # HTTP/2
+ * 
+ * Starting with Go 1.6, the http package has transparent support for the
+ * HTTP/2 protocol when using HTTPS. Programs that must disable HTTP/2
+ * can do so by setting [Transport.TLSNextProto] (for clients) or
+ * [Server.TLSNextProto] (for servers) to a non-nil, empty
+ * map. Alternatively, the following GODEBUG settings are
+ * currently supported:
+ * 
+ * ```
+ * 	GODEBUG=http2client=0  # disable HTTP/2 client support
+ * 	GODEBUG=http2server=0  # disable HTTP/2 server support
+ * 	GODEBUG=http2debug=1   # enable verbose HTTP/2 debug logs
+ * 	GODEBUG=http2debug=2   # ... even more verbose, with frame dumps
+ * ```
+ * 
+ * Please report any issues before disabling HTTP/2 support: https://golang.org/s/http2bug
+ * 
+ * The http package's [Transport] and [Server] both automatically enable
+ * HTTP/2 support for simple configurations. To enable HTTP/2 for more
+ * complex configurations, to use lower-level HTTP/2 features, or to use
+ * a newer version of Go's http2 package, import "golang.org/x/net/http2"
+ * directly and use its ConfigureTransport and/or ConfigureServer
+ * functions. Manually configuring HTTP/2 via the golang.org/x/net/http2
+ * package takes precedence over the net/http package's built-in HTTP/2
+ * support.
+ */
+namespace http {
+ /**
+  * SameSite allows a server to define a cookie attribute making it impossible for
+  * the browser to send this cookie along with cross-site requests. The main
+  * goal is to mitigate the risk of cross-origin information leakage, and provide
+  * some protection against cross-site request forgery attacks.
+  * 
+  * See https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00 for details.
+  */
+ interface SameSite extends Number{}
+ // @ts-ignore
+ import mathrand = rand
+ // @ts-ignore
+ import urlpkg = url
+}
+
 namespace store {
+}
+
+namespace hook {
+ /**
+  * Handler defines a hook handler function.
+  */
+ interface Handler<T> {(e: T): void }
+ /**
+  * wrapped local Hook embedded struct to limit the public API surface.
+  */
+ type _subpOOIg<T> = Hook<T>
+ interface mainHook<T> extends _subpOOIg<T> {
+ }
 }
 
 /**
@@ -18871,10 +18853,8 @@ namespace store {
  * Now computeExpensiveValue will only be called when the line is enabled.
  * 
  * The built-in handlers acquire a lock before calling [io.Writer.Write]
- * to ensure that exactly one [Record] is written at a time in its entirety.
- * Although each log record has a timestamp,
- * the built-in handlers do not use that time to sort the written records.
- * User-defined handlers are responsible for their own locking and sorting.
+ * to ensure that each record is written in one piece. User-defined
+ * handlers are responsible for their own locking.
  * 
  * # Writing a handler
  * 
@@ -19046,152 +19026,84 @@ namespace slog {
  import loginternal = internal
 }
 
-namespace search {
+namespace subscriptions {
  /**
-  * Result defines the returned search result structure.
+  * Message defines a client's channel data.
   */
- interface Result {
-  page: number
-  perPage: number
-  totalItems: number
-  totalPages: number
-  items: any
+ interface Message {
+  name: string
+  data: string|Array<number>
  }
-}
-
-/**
- * Package http provides HTTP client and server implementations.
- * 
- * [Get], [Head], [Post], and [PostForm] make HTTP (or HTTPS) requests:
- * 
- * ```
- * 	resp, err := http.Get("http://example.com/")
- * 	...
- * 	resp, err := http.Post("http://example.com/upload", "image/jpeg", &buf)
- * 	...
- * 	resp, err := http.PostForm("http://example.com/form",
- * 		url.Values{"key": {"Value"}, "id": {"123"}})
- * ```
- * 
- * The caller must close the response body when finished with it:
- * 
- * ```
- * 	resp, err := http.Get("http://example.com/")
- * 	if err != nil {
- * 		// handle error
- * 	}
- * 	defer resp.Body.Close()
- * 	body, err := io.ReadAll(resp.Body)
- * 	// ...
- * ```
- * 
- * # Clients and Transports
- * 
- * For control over HTTP client headers, redirect policy, and other
- * settings, create a [Client]:
- * 
- * ```
- * 	client := &http.Client{
- * 		CheckRedirect: redirectPolicyFunc,
- * 	}
- * 
- * 	resp, err := client.Get("http://example.com")
- * 	// ...
- * 
- * 	req, err := http.NewRequest("GET", "http://example.com", nil)
- * 	// ...
- * 	req.Header.Add("If-None-Match", `W/"wyzzy"`)
- * 	resp, err := client.Do(req)
- * 	// ...
- * ```
- * 
- * For control over proxies, TLS configuration, keep-alives,
- * compression, and other settings, create a [Transport]:
- * 
- * ```
- * 	tr := &http.Transport{
- * 		MaxIdleConns:       10,
- * 		IdleConnTimeout:    30 * time.Second,
- * 		DisableCompression: true,
- * 	}
- * 	client := &http.Client{Transport: tr}
- * 	resp, err := client.Get("https://example.com")
- * ```
- * 
- * Clients and Transports are safe for concurrent use by multiple
- * goroutines and for efficiency should only be created once and re-used.
- * 
- * # Servers
- * 
- * ListenAndServe starts an HTTP server with a given address and handler.
- * The handler is usually nil, which means to use [DefaultServeMux].
- * [Handle] and [HandleFunc] add handlers to [DefaultServeMux]:
- * 
- * ```
- * 	http.Handle("/foo", fooHandler)
- * 
- * 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
- * 		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
- * 	})
- * 
- * 	log.Fatal(http.ListenAndServe(":8080", nil))
- * ```
- * 
- * More control over the server's behavior is available by creating a
- * custom Server:
- * 
- * ```
- * 	s := &http.Server{
- * 		Addr:           ":8080",
- * 		Handler:        myHandler,
- * 		ReadTimeout:    10 * time.Second,
- * 		WriteTimeout:   10 * time.Second,
- * 		MaxHeaderBytes: 1 << 20,
- * 	}
- * 	log.Fatal(s.ListenAndServe())
- * ```
- * 
- * # HTTP/2
- * 
- * Starting with Go 1.6, the http package has transparent support for the
- * HTTP/2 protocol when using HTTPS. Programs that must disable HTTP/2
- * can do so by setting [Transport.TLSNextProto] (for clients) or
- * [Server.TLSNextProto] (for servers) to a non-nil, empty
- * map. Alternatively, the following GODEBUG settings are
- * currently supported:
- * 
- * ```
- * 	GODEBUG=http2client=0  # disable HTTP/2 client support
- * 	GODEBUG=http2server=0  # disable HTTP/2 server support
- * 	GODEBUG=http2debug=1   # enable verbose HTTP/2 debug logs
- * 	GODEBUG=http2debug=2   # ... even more verbose, with frame dumps
- * ```
- * 
- * Please report any issues before disabling HTTP/2 support: https://golang.org/s/http2bug
- * 
- * The http package's [Transport] and [Server] both automatically enable
- * HTTP/2 support for simple configurations. To enable HTTP/2 for more
- * complex configurations, to use lower-level HTTP/2 features, or to use
- * a newer version of Go's http2 package, import "golang.org/x/net/http2"
- * directly and use its ConfigureTransport and/or ConfigureServer
- * functions. Manually configuring HTTP/2 via the golang.org/x/net/http2
- * package takes precedence over the net/http package's built-in HTTP/2
- * support.
- */
-namespace http {
  /**
-  * SameSite allows a server to define a cookie attribute making it impossible for
-  * the browser to send this cookie along with cross-site requests. The main
-  * goal is to mitigate the risk of cross-origin information leakage, and provide
-  * some protection against cross-site request forgery attacks.
-  * 
-  * See https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00 for details.
+  * Client is an interface for a generic subscription client.
   */
- interface SameSite extends Number{}
- // @ts-ignore
- import mathrand = rand
- // @ts-ignore
- import urlpkg = url
+ interface Client {
+  [key:string]: any;
+  /**
+   * Id Returns the unique id of the client.
+   */
+  id(): string
+  /**
+   * Channel returns the client's communication channel.
+   */
+  channel(): undefined
+  /**
+   * Subscriptions returns a shallow copy of the client subscriptions matching the prefixes.
+   * If no prefix is specified, returns all subscriptions.
+   */
+  subscriptions(...prefixes: string[]): _TygojaDict
+  /**
+   * Subscribe subscribes the client to the provided subscriptions list.
+   * 
+   * Each subscription can also have "options" (json serialized SubscriptionOptions) as query parameter.
+   * 
+   * Example:
+   * 
+   * ```
+   * 	Subscribe(
+   * 	    "subscriptionA",
+   * 	    `subscriptionB?options={"query":{"a":1},"headers":{"x_token":"abc"}}`,
+   * 	)
+   * ```
+   */
+  subscribe(...subs: string[]): void
+  /**
+   * Unsubscribe unsubscribes the client from the provided subscriptions list.
+   */
+  unsubscribe(...subs: string[]): void
+  /**
+   * HasSubscription checks if the client is subscribed to `sub`.
+   */
+  hasSubscription(sub: string): boolean
+  /**
+   * Set stores any value to the client's context.
+   */
+  set(key: string, value: any): void
+  /**
+   * Unset removes a single value from the client's context.
+   */
+  unset(key: string): void
+  /**
+   * Get retrieves the key value from the client's context.
+   */
+  get(key: string): any
+  /**
+   * Discard marks the client as "discarded", meaning that it
+   * shouldn't be used anymore for sending new messages.
+   * 
+   * It is safe to call Discard() multiple times.
+   */
+  discard(): void
+  /**
+   * IsDiscarded indicates whether the client has been "discarded"
+   * and should no longer be used.
+   */
+  isDiscarded(): boolean
+  /**
+   * Send sends the specified message to the client's channel (if not discarded).
+   */
+  send(m: Message): void
+ }
 }
 
 /**
@@ -19309,6 +19221,48 @@ namespace echo {
  }
 }
 
+/**
+ * Package types implements some commonly used db serializable types
+ * like datetime, json, etc.
+ */
+namespace types {
+ /**
+  * JsonRaw defines a json value type that is safe for db read/write.
+  */
+ interface JsonRaw extends Array<number>{}
+ interface JsonRaw {
+  /**
+   * String returns the current JsonRaw instance as a json encoded string.
+   */
+  string(): string
+ }
+ interface JsonRaw {
+  /**
+   * MarshalJSON implements the [json.Marshaler] interface.
+   */
+  marshalJSON(): string|Array<number>
+ }
+ interface JsonRaw {
+  /**
+   * UnmarshalJSON implements the [json.Unmarshaler] interface.
+   */
+  unmarshalJSON(b: string|Array<number>): void
+ }
+ interface JsonRaw {
+  /**
+   * Value implements the [driver.Valuer] interface.
+   */
+  value(): any
+ }
+ interface JsonRaw {
+  /**
+   * Scan implements [sql.Scanner] interface to scan the provided value
+   * into the current JsonRaw instance.
+   */
+  scan(value: any): void
+ }
+}
+
 namespace mailer {
  /**
   * Message defines a generic email message struct.
@@ -19323,6 +19277,19 @@ namespace mailer {
   text: string
   headers: _TygojaDict
   attachments: _TygojaDict
+ }
+}
+
+namespace search {
+ /**
+  * Result defines the returned search result structure.
+  */
+ interface Result {
+  page: number
+  perPage: number
+  totalItems: number
+  totalPages: number
+  items: any
  }
 }
 
@@ -19350,99 +19317,6 @@ namespace settings {
  }
 }
 
-namespace hook {
- /**
-  * Handler defines a hook handler function.
-  */
- interface Handler<T> {(e: T): void }
- /**
-  * wrapped local Hook embedded struct to limit the public API surface.
-  */
- type _subJIkCv<T> = Hook<T>
- interface mainHook<T> extends _subJIkCv<T> {
- }
-}
-
-namespace subscriptions {
- /**
-  * Message defines a client's channel data.
-  */
- interface Message {
-  name: string
-  data: string|Array<number>
- }
- /**
-  * Client is an interface for a generic subscription client.
-  */
- interface Client {
-  [key:string]: any;
-  /**
-   * Id Returns the unique id of the client.
-   */
-  id(): string
-  /**
-   * Channel returns the client's communication channel.
-   */
-  channel(): undefined
-  /**
-   * Subscriptions returns a shallow copy of the client subscriptions matching the prefixes.
-   * If no prefix is specified, returns all subscriptions.
-   */
-  subscriptions(...prefixes: string[]): _TygojaDict
-  /**
-   * Subscribe subscribes the client to the provided subscriptions list.
-   * 
-   * Each subscription can also have "options" (json serialized SubscriptionOptions) as query parameter.
-   * 
-   * Example:
-   * 
-   * ```
-   * 	Subscribe(
-   * 	    "subscriptionA",
-   * 	    `subscriptionB?options={"query":{"a":1},"headers":{"x_token":"abc"}}`,
-   * 	)
-   * ```
-   */
-  subscribe(...subs: string[]): void
-  /**
-   * Unsubscribe unsubscribes the client from the provided subscriptions list.
-   */
-  unsubscribe(...subs: string[]): void
-  /**
-   * HasSubscription checks if the client is subscribed to `sub`.
-   */
-  hasSubscription(sub: string): boolean
-  /**
-   * Set stores any value to the client's context.
-   */
-  set(key: string, value: any): void
-  /**
-   * Unset removes a single value from the client's context.
-   */
-  unset(key: string): void
-  /**
-   * Get retrieves the key value from the client's context.
-   */
-  get(key: string): any
-  /**
-   * Discard marks the client as "discarded", meaning that it
-   * shouldn't be used anymore for sending new messages.
-   * 
-   * It is safe to call Discard() multiple times.
-   */
-  discard(): void
-  /**
-   * IsDiscarded indicates whether the client has been "discarded"
-   * and should no longer be used.
-   */
-  isDiscarded(): boolean
-  /**
-   * Send sends the specified message to the client's channel (if not discarded).
-   */
-  send(m: Message): void
- }
-}
-
 /**
  * Package core is the backbone of PocketBase.
  * 
@@ -19461,16 +19335,6 @@ namespace core {
  interface BaseCollectionEvent {
   tags(): Array<string>
  }
-}
-
-namespace subscriptions {
-}
-
-/**
- * Package types implements some commonly used db serializable types
- * like datetime, json, etc.
- */
-namespace types {
 }
 
 /**
@@ -19739,6 +19603,16 @@ namespace bufio {
 }
 
 /**
+ * Package types implements some commonly used db serializable types
+ * like datetime, json, etc.
+ */
+namespace types {
+}
+
+namespace search {
+}
+
+/**
  * Package slog provides structured logging,
  * in which log records include a message,
  * a severity level, and various other attributes
@@ -20102,10 +19976,8 @@ namespace bufio {
  * Now computeExpensiveValue will only be called when the line is enabled.
  * 
  * The built-in handlers acquire a lock before calling [io.Writer.Write]
- * to ensure that exactly one [Record] is written at a time in its entirety.
- * Although each log record has a timestamp,
- * the built-in handlers do not use that time to sort the written records.
- * User-defined handlers are responsible for their own locking and sorting.
+ * to ensure that each record is written in one piece. User-defined
+ * handlers are responsible for their own locking.
  * 
  * # Writing a handler
  * 
@@ -20283,7 +20155,7 @@ namespace slog {
  }
 }
 
-namespace search {
+namespace subscriptions {
 }
 
 /**
@@ -20298,6 +20170,7 @@ namespace search {
  *   - The full range of spacing (the CFWS syntax element) is not supported,
  *     such as breaking addresses across lines.
  *   - No unicode normalization is performed.
+ *   - The special characters ()[]:;@\, are allowed to appear unquoted in names.
  *   - A leading From line is permitted, as in mbox format (RFC 4155).
  * ```
  */
@@ -20685,10 +20558,8 @@ namespace mail {
  * Now computeExpensiveValue will only be called when the line is enabled.
  * 
  * The built-in handlers acquire a lock before calling [io.Writer.Write]
- * to ensure that exactly one [Record] is written at a time in its entirety.
- * Although each log record has a timestamp,
- * the built-in handlers do not use that time to sort the written records.
- * User-defined handlers are responsible for their own locking and sorting.
+ * to ensure that each record is written in one piece. User-defined
+ * handlers are responsible for their own locking.
  * 
  * # Writing a handler
  * 

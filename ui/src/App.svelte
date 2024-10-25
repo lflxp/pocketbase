@@ -106,6 +106,16 @@
                     <i class="ri-line-chart-line" />
                 </a>
                 <a
+                    href="/tools"
+                    class="menu-item"
+                    aria-label="Tools"
+                    use:link
+                    use:active={{ path: "/tools/?.*", className: "current-route" }}
+                    use:tooltip={{ text: "Tools", position: "right" }}
+                >
+                    <i class="ri-vip-line" />
+                </a>
+                <a
                     href="/settings"
                     class="menu-item"
                     aria-label="Settings"
