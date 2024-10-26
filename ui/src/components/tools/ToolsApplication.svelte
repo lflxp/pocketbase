@@ -8,6 +8,7 @@
     import Field from "@/components/base/Field.svelte";
     import ToolsSidebar from "@/components/tools/ToolsSidebar.svelte";
     import ToolsTemplateAccordion from "@/components/tools/ToolsTemplateAccordion.svelte";
+    
 
     $pageTitle = "Application tools";
 
@@ -16,10 +17,13 @@
     let isLoading = false;
     let isSaving = false;
     let initialHash = "";
-
+    let jwtData = "";
+    
     $: initialHash = JSON.stringify(originalFormSettings);
 
     $: hasChanges = initialHash != JSON.stringify(formSettings);
+
+    $: rightData = jwtData + ' right';
 
     loadSettings();
 
@@ -68,6 +72,15 @@
     function reset() {
         formSettings = JSON.parse(JSON.stringify(originalFormSettings || {}));
     }
+
+    let m = { x: 0, y: 0 };
+
+	function handleMousemove(event) {
+		m.x = event.clientX;
+		m.y = event.clientY;
+	}
+
+    
 </script>
 
 <ToolsSidebar />
@@ -76,11 +89,12 @@
     <header class="page-header">
         <nav class="breadcrumbs">
             <div class="breadcrumb-item">Settings</div>
-            <div class="breadcrumb-item">Application</div>
+            <div class="breadcrumb-item">工具转换</div>
         </nav>
     </header>
 
-    <div class="wrapper">
+    <div class="wrapper" role="region" aria-label="Mouse position tracker" on:mousemove={handleMousemove}>
+        <div> The mouse position is {m.x} x {m.y}</div>
         <form class="panel" autocomplete="off" on:submit|preventDefault={save}>
             {#if isLoading}
                 <div class="loader" />
@@ -92,7 +106,7 @@
                     title={'JWT转换'}
                   />
                 </div>
-                <div class="grid">
+                <!-- <div class="grid">
                     <div class="col-lg-6">
                         <Field class="form-field required" name="meta.appName" let:uniqueId>
                             <label for={uniqueId}>Application name</label>
@@ -149,7 +163,7 @@
                             <span class="txt">Save changes</span>
                         </button>
                     </div>
-                </div>
+                </div> -->
             {/if}
         </form>
     </div>

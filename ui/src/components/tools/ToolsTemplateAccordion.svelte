@@ -10,10 +10,15 @@
     import CommonHelper from "@/utils/CommonHelper";
     import Field from "@/components/base/Field.svelte";
     import Accordion from "@/components/base/Accordion.svelte";
+    import { Base64 } from 'js-base64';
 
     export let key;
     export let title;
     export let config = {};
+
+    let left;
+    
+    $: right = Changea(left);
 
     let accordion;
     let editorComponent = cachedEditorComponent;
@@ -56,6 +61,26 @@
         addInfoToast(`Copied ${param} to clipboard`, 2000);
     }
 
+    function Changea(data) {
+        console.log('1111', data);
+        var rs = "";
+        if (data === undefined) {
+            return "";
+        }
+        let tmp = data.split(".");
+        console.log(data, tmp, tmp.length);
+        if (tmp.length === 3) {
+            // let xx = Base64.decode(tmp[1]);
+            // rs = JSON.parse(xx);
+            rs = Base64.decode(tmp[1]);
+        } else {
+            // rs = JSON.parse('{"msg":"数据格式不对"}');
+            rs = '{"msg":"数据格式不对"}';
+        }
+        console.log('2222', rs);
+        return rs
+    }
+
     loadEditorComponent();
 </script>
 
@@ -77,7 +102,7 @@
         {/if}
     </svelte:fragment>
 
-    <Field class="form-field required" name="{key}.subject" let:uniqueId>
+    <!-- <Field class="form-field required" name="{key}.subject" let:uniqueId>
         <label for={uniqueId}>原文</label>
         <input type="text" id={uniqueId} bind:value={config.subject} spellcheck="false" required />
         <div class="help-block">
@@ -127,23 +152,19 @@
                 {"{TOKEN}"}
             </button>.
         </div>
-    </Field>
+    </Field> -->
 
     <Field class="form-field required" name="{key}.body" let:uniqueId>
         <label for={uniqueId}>原文</label>
 
-        {#if editorComponent && !isEditorComponentLoading}
-            <svelte:component this={editorComponent} id={uniqueId} language="html" bind:value={config.body} />
-        {:else}
-            <textarea
-                id={uniqueId}
-                class="txt-mono"
-                spellcheck="false"
-                rows="14"
-                required
-                bind:value={config.body}
-            />
-        {/if}
+        <textarea
+            id={uniqueId}
+            class="txt-mono"
+            spellcheck="false"
+            rows="14"
+            required
+            bind:value={left}
+        />
 
         <div class="help-block">
             Available placeholder parameters:
@@ -182,18 +203,14 @@
     <Field class="form-field m-0 required" name="{key}.body" let:uniqueId>
         <label for={uniqueId}>译文</label>
 
-        {#if editorComponent && !isEditorComponentLoading}
-            <svelte:component this={editorComponent} id={uniqueId} language="html" bind:value={config.body} />
-        {:else}
-            <textarea
-                id={uniqueId}
-                class="txt-mono"
-                spellcheck="false"
-                rows="14"
-                required
-                bind:value={config.body}
-            />
-        {/if}
+        <textarea
+            id={uniqueId}
+            class="txt-mono"
+            spellcheck="false"
+            rows="14"
+            required
+            bind:value={right}
+        />
 
         <div class="help-block">
             Available placeholder parameters:

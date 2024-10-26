@@ -34,5 +34,8 @@
     "svelte-flatpickr": "^3.3.3",
     "svelte-spa-router": "^4.0.0",
     "vite": "^5.0.11"
+  },
+  "dependencies": {
+    "js-base64": "^3.7.7"
   }
 }
