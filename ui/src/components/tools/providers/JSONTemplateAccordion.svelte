@@ -11,14 +11,29 @@
     import Field from "@/components/base/Field.svelte";
     import Accordion from "@/components/base/Accordion.svelte";
     import { Base64 } from 'js-base64';
+    import { JSONEditor } from 'svelte-jsoneditor'
 
     export let key;
     export let title;
     export let config = {};
 
     let left;
-    
-    $: right = Changea(left);
+
+    // let content = {
+    //     text: undefined, // can be used to pass a stringified JSON document instead
+    //     json: {
+    //     array: [1, 2, 3],
+    //     boolean: true,
+    //     color: '#82b92c',
+    //     null: null,
+    //     number: 123,
+    //     object: { a: 'b', c: 'd' },
+    //     string: 'Hello World'
+    //     }
+    // }
+
+    // $: right = Changea(left);
+    $: content = {text: left};
 
     let accordion;
     let editorComponent = cachedEditorComponent;
@@ -78,7 +93,8 @@
             rs = '{"msg":"数据格式不对"}';
         }
         console.log('2222', rs);
-        return rs
+        
+        return {text: rs};
     }
 
     loadEditorComponent();
@@ -203,14 +219,18 @@
     <Field class="form-field m-0 required" name="{key}.body" let:uniqueId>
         <label for={uniqueId}>译文</label>
 
-        <textarea
+        <!-- <textarea
             id={uniqueId}
             class="txt-mono"
             spellcheck="false"
             rows="14"
             required
             bind:value={right}
-        />
+        /> -->
+
+        <JSONEditor 
+            class="txt-mono" 
+            bind:content />
 
         <div class="help-block">
             Available placeholder parameters:
